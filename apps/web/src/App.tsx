@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { WorkoutProgram, SetItem, GymMember, NotificationItem } from './types/gym';
 import { loadGymState, saveGymState, type GymAppState } from './services/gymStorage';
-import { fetchHealthPing } from './services/api';
 
 export default function App() {
   // -------------------------------------------------------------
@@ -27,34 +26,6 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState(25);
   const [selectedCategory, setSelectedCategory] = useState('All Type');
   const [peakDay, setPeakDay] = useState('DO');
-
-  // Cloudflare Worker Live Health & Telemetry
-  const [workerLatency, setWorkerLatency] = useState<number | null>(null);
-  const [workerStatus, setWorkerStatus] = useState<'checking' | 'online' | 'offline'>('checking');
-
-  useEffect(() => {
-    fetchHealthPing().then((res) => {
-      if (res.ok) {
-        setWorkerStatus('online');
-        setWorkerLatency(res.latency);
-      } else {
-        setWorkerStatus('offline');
-      }
-    });
-
-    const interval = setInterval(() => {
-      fetchHealthPing().then((res) => {
-        if (res.ok) {
-          setWorkerStatus('online');
-          setWorkerLatency(res.latency);
-        } else {
-          setWorkerStatus('offline');
-        }
-      });
-    }, 15000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   // -------------------------------------------------------------
   // Dynamic Attendance Check-In Duration Calculation
@@ -553,10 +524,6 @@ export default function App() {
                 <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-600 border border-slate-200">
                   STUDIO
                 </span>
-              </div>
-              <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-semibold text-slate-500">
-                <span className={`w-2 h-2 rounded-full ${workerStatus === 'online' ? 'bg-emerald-500 animate-pulse' : workerStatus === 'checking' ? 'bg-amber-400' : 'bg-red-500'}`}></span>
-                <span>{workerStatus === 'online' ? `Edge API Online (${workerLatency}ms)` : workerStatus === 'checking' ? 'Connecting to Edge...' : 'Edge Storage Active'}</span>
               </div>
             </div>
           </div>
