@@ -4,11 +4,12 @@
   "main": "apps/worker/src/index.ts",
   "compatibility_date": "2024-11-12",
   "compatibility_flags": ["nodejs_compat"],
+  "account_id": "68de8c2096d7fa589eb2dcacb521d93e",
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "gym-management-db",
-      "database_id": "00000000-0000-0000-0000-000000000001",
+      "database_id": "d5a97b03-f8d9-4f26-8b46-0e85eb2a7708",
       "migrations_dir": "apps/worker/src/database/migrations"
     }
   ],
@@ -21,17 +22,16 @@
   "kv_namespaces": [
     {
       "binding": "GYM_CACHE",
-      "id": "gym-cache-default-id"
+      "id": "f914ec97b53a45c3a6eb3e626a248d6f"
     }
   ],
   "triggers": {
     "crons": ["0 0 * * *"]
   },
   "vars": {
-    "ENVIRONMENT": "development",
-    "JWT_SECRET": "gym-jwt-dev-secret-key-32chars-minimum-needed!",
+    "ENVIRONMENT": "production",
+    "JWT_SECRET": "gym-jwt-prod-secret-key-32chars-minimum-needed!",
     "DEFAULT_GYM_ID": "00000000-0000-0000-0000-000000000001",
     "APP_NAME": "FITPULSE Gym Management"
   }
 }
-
