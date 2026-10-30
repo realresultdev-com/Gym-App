@@ -15,6 +15,7 @@ import { LoginPage } from './components/LoginPage';
 import { MemberFeesView } from './components/MemberFeesView';
 import { AdminFeesView } from './components/AdminFeesView';
 import { ReceiptModal } from './components/ReceiptModal';
+import { ExerciseCourseView } from './components/ExerciseCourseView';
 import {
   IconDashboard,
   IconDumbbell,
@@ -61,7 +62,7 @@ export default function App() {
   };
 
   // Navigation & Modals
-  const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'fees' | 'admin'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'fees' | 'guide' | 'admin'>('home');
   const [activeReceiptRecord, setActiveReceiptRecord] = useState<FeePaymentRecord | null>(null);
   const [activeReceiptProfile, setActiveReceiptProfile] = useState<MemberFeeProfile | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -772,6 +773,18 @@ export default function App() {
                 </button>
 
                 <button
+                  onClick={() => setActiveTab('guide')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                    activeTab === 'guide'
+                      ? 'bg-white text-slate-900 shadow-sm font-bold'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <IconDumbbell className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Exercise Guide</span>
+                </button>
+
+                <button
                   onClick={() => setActiveTab('attendance')}
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
                     activeTab === 'attendance'
@@ -1098,6 +1111,43 @@ export default function App() {
               MEMBER VIEW (Clean, Responsive Multi-Column Layout)
           ========================================================== */
           <div>
+            {activeTab === 'guide' && (
+              <ExerciseCourseView
+                onLogCompletedSession={(exName, sets, reps) => {
+                  setGymState((prev) => ({
+                    ...prev,
+                    streakDays: prev.streakDays + 1,
+                    completedSessions: [
+                      {
+                        id: `sess-${Date.now()}`,
+                        programId: 'prog-pushup-guide',
+                        programTitle: `${exName} Technique Practice`,
+                        startedAt: 'Today',
+                        completedAt: 'Just now',
+                        durationSeconds: 300,
+                        setsCompleted: sets,
+                        totalSets: sets,
+                        notes: `Spotebi guide completed: ${reps} total repetitions.`,
+                      },
+                      ...prev.completedSessions,
+                    ],
+                    notifications: [
+                      {
+                        id: `notif-${Date.now()}`,
+                        title: 'Exercise Guide Completed',
+                        message: `Great form! You completed 3 sets of ${exName}. Streak increased to ${prev.streakDays + 1} days!`,
+                        type: 'WORKOUT',
+                        createdAt: 'Just now',
+                        read: false,
+                        author: 'Exercise Coach',
+                      },
+                      ...prev.notifications,
+                    ],
+                  }));
+                }}
+              />
+            )}
+
             {activeTab === 'fees' && (
               <MemberFeesView
                 profile={
@@ -1157,6 +1207,36 @@ export default function App() {
                       src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=400"
                       className="absolute -right-2 sm:right-6 -bottom-6 w-40 sm:w-52 h-52 sm:h-64 object-cover pointer-events-none opacity-95"
                     />
+                  </div>
+
+                  {/* Featured Course Card: Push-Up Mastery */}
+                  <div
+                    onClick={() => setActiveTab('guide')}
+                    className="p-5 rounded-3xl bg-slate-900 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-800 transition"
+                  >
+                    <div className="flex items-center space-x-3.5">
+                      <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shrink-0 border border-slate-700">
+                        <img
+                          src="/exercises/pushup-step1.png"
+                          alt="Push-Up"
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">
+                            Technique Course
+                          </span>
+                          <span className="text-xs text-slate-400">Lesson 01</span>
+                        </div>
+                        <h4 className="text-sm font-bold text-white mt-1">Foundational Exercise: Standard Push-Up</h4>
+                        <p className="text-xs text-slate-300 mt-0.5">Spotebi step-by-step visual form guide with animated video loop</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1.5 text-xs font-bold text-amber-400 shrink-0">
+                      <span>Start Course</span>
+                      <IconChevronRight className="w-4 h-4" />
+                    </div>
                   </div>
 
                   {/* Clean Streak Card */}
@@ -1593,6 +1673,16 @@ export default function App() {
         >
           <IconDumbbell className="w-4 h-4" />
           <span>Workout</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('guide')}
+          className={`p-2 rounded-xl text-xs font-semibold flex items-center space-x-1 ${
+            activeTab === 'guide' ? 'text-slate-900 bg-slate-100' : 'text-slate-500'
+          }`}
+        >
+          <IconDumbbell className="w-4 h-4 text-amber-500" />
+          <span>Guide</span>
         </button>
 
         <button

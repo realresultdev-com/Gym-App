@@ -77,6 +77,35 @@ export interface NotificationItem {
   author: string;
 }
 
+export interface ExerciseStep {
+  stepNumber: number;
+  title: string;
+  instruction: string;
+  cue: string;
+  imageUrl: string;
+}
+
+export interface ExerciseGuide {
+  id: string;
+  slug: string;
+  name: string;
+  series: string;
+  lessonNumber: number;
+  category: 'Upper Body' | 'Lower Body' | 'Core' | 'Full Body';
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  equipment: 'Bodyweight' | 'Dumbbells' | 'Barbell' | 'Cable';
+  targetMusclesPrimary: string[];
+  targetMusclesSecondary: string[];
+  overview: string;
+  benefits: string[];
+  steps: ExerciseStep[];
+  formTips: string[];
+  commonMistakes: string[];
+  recommendedSetsReps: string;
+  tempo: string;
+  variations: { name: string; level: string; description: string }[];
+}
+
 export type PaymentMethod = 'Credit Card' | 'UPI / QR' | 'Cash Desk' | 'Bank Transfer' | 'Apple Pay';
 
 export type FeeStatus = 'PAID' | 'DUE_SOON' | 'OVERDUE';
