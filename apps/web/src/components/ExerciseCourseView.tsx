@@ -1,8 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { ExerciseGuide } from '../types/gym';
 import { FOUNDATIONAL_EXERCISES } from '../data/exerciseGuides';
 import { ExerciseGraphic } from './ExerciseGraphic';
-import { IconCheckCircle } from './Icons';
+import {
+  IconCheckCircle,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronDown,
+  IconCheck,
+} from './Icons';
 
 interface ExerciseCourseViewProps {
   onLogCompletedSession?: (exerciseName: string, sets: number, reps: number) => void;
@@ -18,11 +24,42 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
   const [feedbackToast, setFeedbackToast] = useState('');
   const [practiceActive, setPracticeActive] = useState(false);
   const [practiceSets, setPracticeSets] = useState(1);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Filter exercises by category
   const filteredExercises = selectedCategory === 'ALL'
     ? FOUNDATIONAL_EXERCISES
     : FOUNDATIONAL_EXERCISES.filter((ex) => ex.category === selectedCategory);
+
+  const currentIndex = FOUNDATIONAL_EXERCISES.findIndex((ex) => ex.id === selectedExercise.id);
+
+  const handlePrevExercise = () => {
+    if (currentIndex > 0) {
+      const prev = FOUNDATIONAL_EXERCISES[currentIndex - 1];
+      setSelectedExercise(prev);
+      setActiveTab('ANIMATION');
+    }
+  };
+
+  const handleNextExercise = () => {
+    if (currentIndex < FOUNDATIONAL_EXERCISES.length - 1) {
+      const next = FOUNDATIONAL_EXERCISES[currentIndex + 1];
+      setSelectedExercise(next);
+      setActiveTab('ANIMATION');
+    }
+  };
 
   // Smooth continuous animation cycling between start and finish frames
   useEffect(() => {
@@ -51,7 +88,7 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
   };
 
   return (
-    <div className="space-y-6 antialiased">
+    <div className="space-y-4 antialiased">
       
       {/* Toast Feedback */}
       {feedbackToast && (
@@ -61,77 +98,170 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
         </div>
       )}
 
-      {/* Category Filter Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
-          {(
-            [
-              { id: 'ALL', label: 'All Exercises (10)' },
-              { id: 'Push', label: 'Push (Chest & Shoulders)' },
-              { id: 'Pull', label: 'Pull (Back & Biceps)' },
-              { id: 'Legs & Core', label: 'Legs & Core' },
-            ] as const
-          ).map((cat) => {
-            const isSelected = selectedCategory === cat.id;
+      {/* Human-Made Clean Exercise Navigation Bar */}
+      <div className="space-y-3">
+        {/* Top Control Strip */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+          
+          {/* Left: Interactive Exercise Dropdown Selector + Next/Prev Stepper */}
+          <div className="flex items-center space-x-2 relative" ref={dropdownRef}>
+            {/* Prev Button */}
+            <button
+              onClick={handlePrevExercise}
+              disabled={currentIndex <= 0}
+              title="Previous Exercise"
+              className="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition cursor-pointer text-slate-700 shadow-2xs"
+            >
+              <IconChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Exercise Selector Dropdown Trigger */}
+            <button
+              onClick={() => setDropdownOpen((v) => !v)}
+              className="flex items-center space-x-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition cursor-pointer shadow-2xs group"
+            >
+              <span className="w-5 h-5 rounded-full bg-slate-900 text-white font-number text-[11px] font-bold flex items-center justify-center">
+                {selectedExercise.lessonNumber}
+              </span>
+              <span className="text-xs font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                {selectedExercise.name}
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1.5 py-0.5 rounded bg-slate-100">
+                {selectedExercise.category}
+              </span>
+              <IconChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Next Button */}
+            <button
+              onClick={handleNextExercise}
+              disabled={currentIndex >= FOUNDATIONAL_EXERCISES.length - 1}
+              title="Next Exercise"
+              className="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition cursor-pointer text-slate-700 shadow-2xs"
+            >
+              <IconChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* Dropdown Menu Modal */}
+            {dropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                  <span>Exercise Guide (10 Lessons)</span>
+                  <span>{currentIndex + 1}/10</span>
+                </div>
+                <div className="max-h-80 overflow-y-auto divide-y divide-slate-50 py-1">
+                  {(['Push', 'Pull', 'Legs & Core'] as const).map((group) => {
+                    const groupExercises = FOUNDATIONAL_EXERCISES.filter((ex) => ex.category === group);
+                    return (
+                      <div key={group} className="py-1">
+                        <span className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                          {group}
+                        </span>
+                        {groupExercises.map((ex) => {
+                          const isSelected = selectedExercise.id === ex.id;
+                          return (
+                            <button
+                              key={ex.id}
+                              onClick={() => {
+                                setSelectedExercise(ex);
+                                setActiveTab('ANIMATION');
+                                setDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition cursor-pointer ${
+                                isSelected
+                                  ? 'bg-slate-900 text-white font-bold'
+                                  : 'text-slate-700 hover:bg-slate-100'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <span className={`text-[11px] font-number font-bold ${isSelected ? 'text-amber-400' : 'text-slate-400'}`}>
+                                  #{ex.lessonNumber}
+                                </span>
+                                <span>{ex.name}</span>
+                              </div>
+                              {isSelected && <IconCheck className="w-3.5 h-3.5 text-amber-400" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right: Clean Category Filter Tabs & Target */}
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-1">
+              {(
+                [
+                  { id: 'ALL', label: 'All (10)' },
+                  { id: 'Push', label: 'Push' },
+                  { id: 'Pull', label: 'Pull' },
+                  { id: 'Legs & Core', label: 'Legs' },
+                ] as const
+              ).map((cat) => {
+                const isSelected = selectedCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setSelectedCategory(cat.id);
+                      const firstInCat = cat.id === 'ALL'
+                        ? FOUNDATIONAL_EXERCISES[0]
+                        : FOUNDATIONAL_EXERCISES.find((ex) => ex.category === cat.id);
+                      if (firstInCat) {
+                        setSelectedExercise(firstInCat);
+                        setActiveTab('ANIMATION');
+                      }
+                    }}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                      isSelected
+                        ? 'bg-slate-900 text-white'
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <span className="hidden sm:inline-block text-[11px] font-semibold text-slate-400 border-l border-slate-200 pl-3">
+              Target: <strong className="text-slate-700 font-bold">{selectedExercise.recommendedSetsReps}</strong>
+            </span>
+          </div>
+
+        </div>
+
+        {/* Clean Minimal Horizontal Exercise Pill Track (No Background Card Clutter) */}
+        <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
+          {filteredExercises.map((ex) => {
+            const isSelected = selectedExercise.id === ex.id;
+            // Short exercise name without the number prefix
+            const shortName = ex.name.replace(/^\d+\.\s*/, '');
             return (
               <button
-                key={cat.id}
+                key={ex.id}
                 onClick={() => {
-                  setSelectedCategory(cat.id);
-                  const firstInCat = cat.id === 'ALL'
-                    ? FOUNDATIONAL_EXERCISES[0]
-                    : FOUNDATIONAL_EXERCISES.find((ex) => ex.category === cat.id);
-                  if (firstInCat) {
-                    setSelectedExercise(firstInCat);
-                    setActiveTab('ANIMATION');
-                  }
+                  setSelectedExercise(ex);
+                  setActiveTab('ANIMATION');
                 }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer whitespace-nowrap flex items-center space-x-1.5 shrink-0 ${
                   isSelected
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    ? 'bg-slate-900 text-white shadow-2xs font-bold'
+                    : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
                 }`}
               >
-                {cat.label}
+                <span className={`text-[10px] font-number font-bold ${isSelected ? 'text-amber-400' : 'text-slate-400'}`}>
+                  {ex.lessonNumber}
+                </span>
+                <span>{shortName}</span>
               </button>
             );
           })}
         </div>
-
-        <span className="text-[11px] font-semibold text-slate-400">
-          Target: <strong className="text-slate-800 font-bold">{selectedExercise.recommendedSetsReps}</strong>
-        </span>
-      </div>
-
-      {/* Exercise Horizontal Switcher Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
-        {filteredExercises.map((ex) => {
-          const isSelected = selectedExercise.id === ex.id;
-          return (
-            <button
-              key={ex.id}
-              onClick={() => {
-                setSelectedExercise(ex);
-                setActiveTab('ANIMATION');
-              }}
-              className={`p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between space-y-1.5 ${
-                isSelected
-                  ? 'bg-white border-slate-900 shadow-md ring-2 ring-slate-900'
-                  : 'bg-white/90 border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              <div>
-                <span className={`text-[10px] font-bold uppercase tracking-wider block ${
-                  isSelected ? 'text-amber-500' : 'text-slate-400'
-                }`}>
-                  {ex.category}
-                </span>
-                <p className="text-xs font-bold text-slate-900 line-clamp-1 mt-0.5">{ex.name}</p>
-              </div>
-              <p className="text-[10px] font-semibold text-slate-500">{ex.recommendedSetsReps}</p>
-            </button>
-          );
-        })}
       </div>
 
       {/* Hero Motion Animation Card */}
