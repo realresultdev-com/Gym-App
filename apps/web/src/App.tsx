@@ -544,8 +544,8 @@ export default function App() {
           
           {/* Brand Logo & Title with Live Edge Status */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-md shadow-amber-400/20">
-              ⚡
+            <div className="w-10 h-10 rounded-2xl overflow-hidden bg-slate-950 shadow-md shadow-amber-400/20 border border-slate-200 shrink-0">
+              <img src="/fitpulse-logo.png" alt="FITPULSE Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="flex items-center space-x-2">

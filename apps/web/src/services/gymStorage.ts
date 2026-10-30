@@ -237,3 +237,4 @@ export function saveGymState(state: GymAppState): void {
     console.error('Error saving gym state to localStorage:', e);
   }
 }
+
