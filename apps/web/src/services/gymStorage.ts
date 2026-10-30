@@ -30,7 +30,7 @@ export interface GymAppState {
   notifications: NotificationItem[];
 }
 
-const STORAGE_KEY = 'FITPULSE_GYM_STATE_V2';
+const STORAGE_KEY = 'FITPULSE_GYM_STATE_V3';
 
 export const INITIAL_PROGRAMS: WorkoutProgram[] = [
   {
@@ -125,21 +125,30 @@ export const INITIAL_MEMBERS: GymMember[] = [
 export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   {
     id: 'notif-01',
-    title: '⚡ Welcome to FITPULSE Studio',
-    message: 'Your Cloudflare D1 serverless database connection is active and verified.',
+    title: 'Welcome to FITPULSE Studio',
+    message: 'Your Quarterly Pro Athlete membership is active. Locker #42 has been assigned to you.',
     type: 'ANNOUNCEMENT',
-    createdAt: 'Just now',
+    createdAt: 'Today, 09:30 AM',
     read: false,
-    author: 'Sarah Connor (Admin)',
+    author: 'Front Desk',
   },
   {
     id: 'notif-02',
-    title: '🏋️ Workout Assigned by Alex Hunter',
-    message: 'New Pull-Up Mastery & Lat Drive routine added to your daily schedule.',
+    title: 'New Program: Upper Body Focus',
+    message: 'Coach Alex Hunter scheduled your Pull-Up Mastery routine for today.',
     type: 'WORKOUT',
-    createdAt: '2 hours ago',
+    createdAt: 'Today, 07:15 AM',
     read: false,
-    author: 'Alex Hunter (Trainer)',
+    author: 'Alex Hunter',
+  },
+  {
+    id: 'notif-03',
+    title: 'Studio Hours Update',
+    message: 'Recovery sauna will close at 9:00 PM this Friday for scheduled sanitization.',
+    type: 'ANNOUNCEMENT',
+    createdAt: 'Yesterday',
+    read: true,
+    author: 'Management',
   },
 ];
 
