@@ -13,7 +13,6 @@ const PRESET_ACCOUNTS = [
     email: 'member@gym.com',
     password: 'Password123!',
     tag: 'Member',
-    desc: 'Workouts, daily programs & check-in',
     avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
   },
   {
@@ -22,7 +21,6 @@ const PRESET_ACCOUNTS = [
     email: 'trainer@gym.com',
     password: 'Password123!',
     tag: 'Trainer',
-    desc: 'Assigned athletes & plan assignment',
     avatarUrl: 'https://images.unsplash.com/photo-1567013127542-490d757e51fc?q=80&w=200',
   },
   {
@@ -31,25 +29,16 @@ const PRESET_ACCOUNTS = [
     email: 'admin@gym.com',
     password: 'Password123!',
     tag: 'Admin',
-    desc: 'Studio metrics, roster & announcements',
     avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200',
   },
 ];
 
 export function LoginPage({ onLoginSuccess }: LoginPageProps) {
-  const [selectedRole, setSelectedRole] = useState<UserRole>('MEMBER');
   const [email, setEmail] = useState('member@gym.com');
   const [password, setPassword] = useState('Password123!');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-
-  const handleSelectPreset = (preset: typeof PRESET_ACCOUNTS[0]) => {
-    setSelectedRole(preset.role);
-    setEmail(preset.email);
-    setPassword(preset.password);
-    setErrorMsg('');
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +68,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       return;
     }
 
-    // Local fallback matching preset accounts or active user role
+    // Local fallback matching preset accounts based on credentials
     const matchingPreset = PRESET_ACCOUNTS.find(
       (p) => p.email.toLowerCase() === email.trim().toLowerCase()
     );
@@ -97,16 +86,28 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       return;
     }
 
-    // Generic fallback for custom entered credentials
+    // Dynamic role detection for custom entered credentials
     if (password.length >= 6) {
+      const emailLower = email.trim().toLowerCase();
+      let detectedRole: UserRole = 'MEMBER';
+      let detectedName = email.split('@')[0];
+
+      if (emailLower.includes('admin')) {
+        detectedRole = 'ADMIN';
+        detectedName = 'Studio Admin';
+      } else if (emailLower.includes('trainer') || emailLower.includes('coach')) {
+        detectedRole = 'TRAINER';
+        detectedName = 'Studio Trainer';
+      }
+
       const authUser: AuthUser = {
-        id: `usr-${selectedRole.toLowerCase()}-${Date.now()}`,
-        name: email.split('@')[0],
+        id: `usr-${detectedRole.toLowerCase()}-${Date.now()}`,
+        name: detectedName,
         email: email.trim(),
-        role: selectedRole,
+        role: detectedRole,
       };
       setLoading(false);
-      onLoginSuccess(authUser, selectedRole);
+      onLoginSuccess(authUser, detectedRole);
       return;
     }
 
@@ -125,46 +126,12 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-900 tracking-tight">FITPULSE Studio</h1>
-            <p className="text-xs text-slate-500 mt-0.5">Select a role or sign in with your credentials</p>
-          </div>
-        </div>
-
-        {/* Role Quick Selector Cards */}
-        <div className="space-y-2">
-          <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
-            Select Account Role
-          </label>
-          <div className="grid grid-cols-3 gap-2">
-            {PRESET_ACCOUNTS.map((preset) => {
-              const isSelected = selectedRole === preset.role;
-              return (
-                <button
-                  key={preset.role}
-                  type="button"
-                  onClick={() => handleSelectPreset(preset)}
-                  className={`p-3 rounded-2xl border text-center transition cursor-pointer flex flex-col items-center ${
-                    isSelected
-                      ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
-                      : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'
-                  }`}
-                >
-                  <img
-                    src={preset.avatarUrl}
-                    alt={preset.name}
-                    className="w-8 h-8 rounded-full object-cover border border-slate-200 mb-1.5"
-                  />
-                  <span className="text-xs font-semibold">{preset.tag}</span>
-                  <span className={`text-[10px] mt-0.5 truncate w-full ${isSelected ? 'text-slate-300' : 'text-slate-400'}`}>
-                    {preset.name.split(' ')[0]}
-                  </span>
-                </button>
-              );
-            })}
+            <p className="text-xs text-slate-500 mt-0.5">Sign in to your fitness dashboard</p>
           </div>
         </div>
 
         {/* Credentials Form */}
-        <form onSubmit={handleSubmit} className="space-y-3.5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {errorMsg && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
               {errorMsg}
@@ -191,7 +158,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-[11px] text-slate-500 hover:text-slate-800"
+                className="text-[11px] text-slate-500 hover:text-slate-800 cursor-pointer"
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -209,20 +176,44 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold tracking-wide transition cursor-pointer shadow-sm flex items-center justify-center space-x-2 mt-2"
+            className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold tracking-wide transition cursor-pointer shadow-sm flex items-center justify-center space-x-2 mt-2 disabled:opacity-60"
           >
             {loading ? (
               <span>Authenticating...</span>
             ) : (
-              <span>Sign in as {selectedRole === 'ADMIN' ? 'Admin' : selectedRole === 'TRAINER' ? 'Trainer' : 'Member'}</span>
+              <span>Sign In</span>
             )}
           </button>
         </form>
 
-        {/* Demo Credentials Footer */}
-        <div className="pt-2 border-t border-slate-100 text-center">
-          <p className="text-[11px] text-slate-400">
-            Default test password: <span className="font-mono text-slate-600 font-semibold">Password123!</span>
+        {/* Demo Credentials Quick-Fill Footer */}
+        <div className="pt-4 border-t border-slate-100 text-center space-y-2">
+          <p className="text-[11px] font-medium text-slate-400">Demo accounts (click to fill):</p>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => { setEmail('member@gym.com'); setPassword('Password123!'); }}
+              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium transition cursor-pointer"
+            >
+              Member
+            </button>
+            <button
+              type="button"
+              onClick={() => { setEmail('trainer@gym.com'); setPassword('Password123!'); }}
+              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium transition cursor-pointer"
+            >
+              Trainer
+            </button>
+            <button
+              type="button"
+              onClick={() => { setEmail('admin@gym.com'); setPassword('Password123!'); }}
+              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium transition cursor-pointer"
+            >
+              Admin
+            </button>
+          </div>
+          <p className="text-[10px] text-slate-400">
+            Password: <span className="font-mono text-slate-600 font-semibold">Password123!</span>
           </p>
         </div>
 
