@@ -941,16 +941,11 @@ export default function App() {
 
                   {/* Dynamic Streak Card */}
                   <div className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div className="flex items-center space-x-3.5">
-                      <div className="w-11 h-11 rounded-2xl bg-emerald-100 flex items-center justify-center border border-emerald-300 text-lg font-bold text-emerald-700">
-                        ⚡
-                      </div>
-                      <div>
-                        <p className="text-base font-black text-slate-900">{gymState.streakDays} Days Active Streak</p>
-                        <p className="text-xs font-semibold text-slate-500">
-                          {gymState.completedSessions.length} total workouts completed • Keep it up!
-                        </p>
-                      </div>
+                    <div>
+                      <p className="text-base font-black text-slate-900">{gymState.streakDays} Days Active Streak</p>
+                      <p className="text-xs font-semibold text-slate-500">
+                        {gymState.completedSessions.length} total workouts completed • Keep it up!
+                      </p>
                     </div>
                     <span className="text-slate-400 font-bold text-lg hidden sm:block">›</span>
                   </div>
@@ -1139,15 +1134,6 @@ export default function App() {
                           {d}
                         </button>
                       ))}
-                    </div>
-
-                    {/* Live Indicator calculated dynamically */}
-                    <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center space-x-2.5 text-xs">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
-                      <span className="font-bold text-slate-800 flex-1">Live: Nicht zu stark besucht</span>
-                      <span className="font-mono font-bold text-slate-500">
-                        {todayCheckInCount} / 120 ({Math.round((todayCheckInCount / 120) * 100)}%)
-                      </span>
                     </div>
 
                     {/* Hourly Distribution Visual Bars */}
