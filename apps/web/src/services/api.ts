@@ -45,6 +45,22 @@ export async function postCloudflareCheckOut(attendanceId: string) {
   return null;
 }
 
+export async function loginUser(identifier: string, password: string) {
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password }),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('Backend login network error:', err);
+  }
+  return null;
+}
+
 export async function fetchHealthPing(): Promise<{ ok: boolean; latency: number }> {
   const start = performance.now();
   try {

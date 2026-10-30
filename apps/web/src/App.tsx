@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { WorkoutProgram, SetItem, GymMember, NotificationItem } from './types/gym';
+import type { UserRole, AuthUser, WorkoutProgram, SetItem, GymMember, NotificationItem } from './types/gym';
 import { loadGymState, saveGymState, type GymAppState } from './services/gymStorage';
+import { LoginPage } from './components/LoginPage';
 import {
   IconDashboard,
   IconDumbbell,
@@ -23,6 +24,29 @@ export default function App() {
   useEffect(() => {
     saveGymState(gymState);
   }, [gymState]);
+
+  const handleLoginSuccess = (user: AuthUser, role: UserRole) => {
+    setGymState((prev) => ({
+      ...prev,
+      role,
+      auth: {
+        isAuthenticated: true,
+        user,
+      },
+    }));
+    setActiveTab('home');
+  };
+
+  const handleSignOut = () => {
+    setGymState((prev) => ({
+      ...prev,
+      auth: {
+        isAuthenticated: false,
+        user: null,
+      },
+    }));
+    setRoleModalOpen(false);
+  };
 
   // Navigation & Modals
   const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'admin'>('home');
@@ -508,6 +532,10 @@ export default function App() {
     return `${mins.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  if (!gymState.auth?.isAuthenticated) {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col antialiased selection:bg-amber-400 selection:text-black font-sans">
       
@@ -632,6 +660,15 @@ export default function App() {
                 </p>
               </div>
             </div>
+
+            {/* Sign Out Action */}
+            <button
+              onClick={handleSignOut}
+              className="text-xs font-medium text-slate-500 hover:text-slate-900 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+              title="Sign Out"
+            >
+              Sign out
+            </button>
 
           </div>
         </div>
@@ -1435,6 +1472,16 @@ export default function App() {
                   {gymState.role === item.role && <IconCheck className="w-4 h-4 text-amber-400" />}
                 </div>
               ))}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
+              <span className="text-slate-500 font-medium">Want to switch account?</span>
+              <button
+                onClick={handleSignOut}
+                className="text-rose-600 font-semibold hover:underline cursor-pointer"
+              >
+                Log Out
+              </button>
             </div>
           </div>
         </div>

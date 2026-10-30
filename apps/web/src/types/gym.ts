@@ -1,5 +1,14 @@
 export type UserRole = 'MEMBER' | 'TRAINER' | 'ADMIN';
 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatarUrl?: string;
+  token?: string;
+}
+
 export interface SetItem {
   id: string;
   set: number;

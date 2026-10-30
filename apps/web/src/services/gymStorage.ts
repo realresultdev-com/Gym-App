@@ -1,5 +1,6 @@
 import type {
   UserRole,
+  AuthUser,
   WorkoutProgram,
   SetItem,
   WorkoutSessionLog,
@@ -9,6 +10,10 @@ import type {
 } from '../types/gym';
 
 export interface GymAppState {
+  auth: {
+    isAuthenticated: boolean;
+    user: AuthUser | null;
+  };
   role: UserRole;
   activeCheckIn: {
     isCheckedIn: boolean;
@@ -193,6 +198,16 @@ export function loadGymState(): GymAppState {
       const parsed = JSON.parse(raw);
       // Ensure any newly added keys exist
       return {
+        auth: parsed.auth || {
+          isAuthenticated: true,
+          user: {
+            id: 'usr-member-0001',
+            name: 'Martin Vance',
+            email: 'member@gym.com',
+            role: parsed.role || 'MEMBER',
+            avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
+          },
+        },
         role: parsed.role || 'MEMBER',
         activeCheckIn: parsed.activeCheckIn || {
           isCheckedIn: false,
@@ -222,6 +237,16 @@ export function loadGymState(): GymAppState {
   }
 
   return {
+    auth: {
+      isAuthenticated: true,
+      user: {
+        id: 'usr-member-0001',
+        name: 'Martin Vance',
+        email: 'member@gym.com',
+        role: 'MEMBER',
+        avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
+      },
+    },
     role: 'MEMBER',
     activeCheckIn: {
       isCheckedIn: false,
