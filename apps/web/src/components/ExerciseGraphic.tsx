@@ -377,3 +377,4 @@ export function ExerciseGraphic({ slug, frame, className = '' }: ExerciseGraphic
     </svg>
   );
 }
+

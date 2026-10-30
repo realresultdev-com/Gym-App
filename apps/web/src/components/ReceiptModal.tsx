@@ -1,5 +1,5 @@
 import type { FeePaymentRecord, MemberFeeProfile } from '../types/gym';
-import { IconClose, IconDownload, IconCheckCircle } from './Icons';
+import { IconClose, IconDownload } from './Icons';
 
 interface ReceiptModalProps {
   record: FeePaymentRecord | null;
@@ -54,10 +54,7 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
           </div>
           <div>
             <p className="text-slate-400 font-medium">Payment Method</p>
-            <div className="flex items-center space-x-1.5 mt-0.5">
-              <span className="font-semibold text-slate-900">{record.method}</span>
-              <IconCheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-            </div>
+            <p className="font-semibold text-slate-900 mt-0.5">{record.method}</p>
           </div>
         </div>
 
@@ -103,12 +100,12 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
         </div>
 
         {/* Status Stamp & Note */}
-        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between text-xs font-semibold">
+        <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 flex items-center justify-between text-xs font-semibold">
           <div className="flex items-center space-x-2">
-            <IconCheckCircle className="w-4 h-4 text-emerald-600" />
-            <span>PAYMENT STATUS: COMPLETED & VERIFIED</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span className="text-slate-900 font-bold tracking-wide">STATUS: COMPLETED & VERIFIED</span>
           </div>
-          <span className="text-[11px] font-semibold text-emerald-700">{record.recordedBy || 'System Verified'}</span>
+          <span className="text-[11px] font-semibold text-slate-500">{record.recordedBy || 'System Verified'}</span>
         </div>
 
         {/* Actions */}

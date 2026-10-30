@@ -1,14 +1,11 @@
 import { useState, useMemo } from 'react';
 import type { MemberFeeProfile, FeePaymentRecord, PaymentMethod, FeeStatus } from '../types/gym';
 import {
-  IconDollar,
   IconReceipt,
-  IconCalendar,
-  IconCheckCircle,
-  IconAlertCircle,
   IconClose,
   IconPlus,
   IconBell,
+  IconCheckCircle,
 } from './Icons';
 
 interface AdminFeesViewProps {
@@ -147,37 +144,25 @@ export function AdminFeesView({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-slate-500">Total Collected</p>
-            <IconDollar className="w-4 h-4 text-emerald-600" />
-          </div>
+          <p className="text-xs font-medium text-slate-500">Total Collected</p>
           <p className="font-ios-stat text-2xl text-slate-900 mt-1">${totalCollectedThisMonth.toLocaleString()}</p>
           <p className="text-[11px] text-emerald-600 font-semibold mt-1">Verified studio ledger</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-slate-500">Overdue Dues</p>
-            <IconAlertCircle className="w-4 h-4 text-rose-600" />
-          </div>
+          <p className="text-xs font-medium text-slate-500">Overdue Dues</p>
           <p className="font-ios-stat text-2xl text-rose-600 mt-1">${overdueDuesTotal}</p>
           <p className="text-[11px] text-rose-500 font-semibold mt-1">{overdueCount} member{overdueCount !== 1 ? 's' : ''} past due</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-slate-500">Renewals Due &lt; 7 Days</p>
-            <IconCalendar className="w-4 h-4 text-amber-600" />
-          </div>
+          <p className="text-xs font-medium text-slate-500">Renewals Due &lt; 7 Days</p>
           <p className="font-ios-stat text-2xl text-slate-900 mt-1">{dueSoonCount}</p>
           <p className="text-[11px] text-amber-600 font-semibold mt-1">Upcoming cycle renewals</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-slate-500">Active Membership Roster</p>
-            <IconCheckCircle className="w-4 h-4 text-slate-600" />
-          </div>
+          <p className="text-xs font-medium text-slate-500">Active Membership Roster</p>
           <p className="font-ios-stat text-2xl text-slate-900 mt-1">{feeProfiles.length}</p>
           <p className="text-[11px] text-slate-400 mt-1">Enrolled fitness athletes</p>
         </div>
@@ -313,14 +298,14 @@ export function AdminFeesView({
 
                     {/* Status Badge */}
                     <td className="py-3.5 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                      <span className={`text-[11px] font-bold uppercase tracking-wider ${
                         p.status === 'OVERDUE'
-                          ? 'bg-rose-100 text-rose-800'
+                          ? 'text-rose-600'
                           : p.status === 'DUE_SOON'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-emerald-100 text-emerald-800'
+                          ? 'text-amber-600'
+                          : 'text-emerald-600'
                       }`}>
-                        {p.status}
+                        {p.status.replace('_', ' ')}
                       </span>
                     </td>
 

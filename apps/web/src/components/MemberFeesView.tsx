@@ -3,8 +3,6 @@ import type { MemberFeeProfile, FeePaymentRecord, PaymentMethod } from '../types
 import {
   IconCreditCard,
   IconReceipt,
-  IconCalendar,
-  IconCheckCircle,
   IconClose,
   IconChevronRight,
 } from './Icons';
@@ -123,17 +121,12 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
         {/* Card 1: Last Payment Details */}
         <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <IconCheckCircle className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-slate-900">Last Payment</h4>
-                <p className="text-[11px] text-slate-500">Verified transaction record</p>
-              </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900">Last Payment</h4>
+              <p className="text-[11px] text-slate-500">Verified transaction record</p>
             </div>
-            <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800">
-              PAID & CLEARED
+            <span className="text-xs font-bold text-emerald-700 tracking-wide uppercase">
+              Paid
             </span>
           </div>
 
@@ -170,23 +163,18 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
         {/* Card 2: Next Fee Due Schedule */}
         <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                <IconCalendar className="w-4 h-4" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-slate-900">Next Fee Due</h4>
-                <p className="text-[11px] text-slate-500">Upcoming renewal breakdown</p>
-              </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900">Next Fee Due</h4>
+              <p className="text-[11px] text-slate-500">Upcoming renewal breakdown</p>
             </div>
-            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
+            <span className={`text-xs font-bold tracking-wide uppercase ${
               profile.status === 'OVERDUE'
-                ? 'bg-rose-100 text-rose-800'
+                ? 'text-rose-600'
                 : profile.status === 'DUE_SOON'
-                ? 'bg-amber-100 text-amber-800'
-                : 'bg-slate-100 text-slate-700'
+                ? 'text-amber-600'
+                : 'text-slate-600'
             }`}>
-              {profile.status === 'OVERDUE' ? 'OVERDUE' : profile.status === 'DUE_SOON' ? 'DUE SOON' : 'UP TO DATE'}
+              {profile.status === 'OVERDUE' ? 'Overdue' : profile.status === 'DUE_SOON' ? 'Due Soon' : 'Current'}
             </span>
           </div>
 
@@ -201,7 +189,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
             </div>
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Auto-Renewal</p>
-              <p className="text-xs font-semibold text-emerald-600 mt-1">Enabled (Card On File)</p>
+              <p className="text-xs font-semibold text-slate-700 mt-1">Enabled (Card On File)</p>
             </div>
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Grace Window</p>
@@ -266,7 +254,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
                     ${record.amount.toFixed(2)}
                   </td>
                   <td className="py-3.5 px-4">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="text-[11px] font-bold text-emerald-700 tracking-wide uppercase">
                       {record.status}
                     </span>
                   </td>
