@@ -24,6 +24,24 @@ export default function App() {
     { set: 4, reps: 8, weight: 'Bodyweight', completed: false },
   ]);
 
+  // Worker Edge Telemetry
+  const [workerLatency, setWorkerLatency] = useState<number | null>(null);
+  const [workerStatus, setWorkerStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+
+  useEffect(() => {
+    const start = performance.now();
+    fetch('https://gym-management-worker.pkaakash007.workers.dev/api/health')
+      .then((res) => {
+        if (res.ok) {
+          setWorkerLatency(Math.round(performance.now() - start));
+          setWorkerStatus('online');
+        } else {
+          setWorkerStatus('offline');
+        }
+      })
+      .catch(() => setWorkerStatus('offline'));
+  }, []);
+
   // Timers
   useEffect(() => {
     let interval: any;
@@ -83,9 +101,10 @@ export default function App() {
                   STUDIO
                 </span>
               </div>
-              <p className="text-[11px] font-semibold text-slate-500 hidden sm:block">
-                Cloudflare Serverless Platform
-              </p>
+              <div className="hidden sm:flex items-center space-x-1.5 text-[11px] font-semibold text-slate-500">
+                <span className={`w-2 h-2 rounded-full ${workerStatus === 'online' ? 'bg-emerald-500 animate-pulse' : workerStatus === 'checking' ? 'bg-amber-400' : 'bg-red-500'}`}></span>
+                <span>{workerStatus === 'online' ? `Edge API Online (${workerLatency}ms)` : workerStatus === 'checking' ? 'Connecting to Edge...' : 'Edge Offline'}</span>
+              </div>
             </div>
           </div>
 

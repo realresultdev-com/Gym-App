@@ -43,6 +43,76 @@ export function createApp() {
 
   // Health & Information Check
   app.get('/', (c) => {
+    const acceptHeader = c.req.header('accept') || '';
+    if (acceptHeader.includes('text/html')) {
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FITPULSE – Cloudflare Serverless Platform</title>
+  <meta http-equiv="refresh" content="2; url=https://gym-management-web.pages.dev">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-md w-full bg-white rounded-3xl p-8 border border-slate-200 shadow-xl text-center space-y-6">
+    <div class="w-16 h-16 rounded-3xl bg-amber-400 flex items-center justify-center text-3xl shadow-lg shadow-amber-400/30 mx-auto">
+      ⚡
+    </div>
+    
+    <div>
+      <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+        ✓ Edge Backend Online
+      </span>
+      <h1 class="text-2xl font-black text-slate-900 mt-3">FITPULSE Serverless API</h1>
+      <p class="text-xs font-semibold text-slate-500 mt-1">
+        Running 100% on Cloudflare Workers, D1 SQLite, KV & R2
+      </p>
+    </div>
+
+    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs space-y-2">
+      <div class="flex justify-between font-bold">
+        <span class="text-slate-500">Relational Database:</span>
+        <span class="text-slate-900 font-mono font-black">Cloudflare D1 (SQLite)</span>
+      </div>
+      <div class="flex justify-between font-bold">
+        <span class="text-slate-500">Object Storage:</span>
+        <span class="text-slate-900 font-mono font-black">Cloudflare R2</span>
+      </div>
+      <div class="flex justify-between font-bold">
+        <span class="text-slate-500">Cache Layer:</span>
+        <span class="text-slate-900 font-mono font-black">Cloudflare KV</span>
+      </div>
+      <div class="flex justify-between font-bold">
+        <span class="text-slate-500">Cron Triggers:</span>
+        <span class="text-slate-900 font-mono font-black">Daily 00:00 UTC</span>
+      </div>
+    </div>
+
+    <div class="space-y-3">
+      <a href="https://gym-management-web.pages.dev"
+         class="w-full inline-block py-3.5 px-6 rounded-2xl bg-slate-950 text-white font-black text-sm shadow-md hover:bg-slate-800 transition">
+        Launch FITPULSE Web App →
+      </a>
+      <p class="text-[11px] font-semibold text-slate-400">
+        Auto-redirecting to Web App in 2 seconds...
+      </p>
+    </div>
+
+    <div class="pt-2 border-t border-slate-100 flex justify-center space-x-4 text-xs font-bold text-slate-500">
+      <a href="/api/health" class="hover:text-slate-900 underline">API Health JSON</a>
+      <span>•</span>
+      <a href="https://github.com/realresultdev-com/Gym-App" class="hover:text-slate-900 underline" target="_blank">GitHub Repo</a>
+    </div>
+  </div>
+</body>
+</html>`;
+      return c.html(html);
+    }
+
     return c.json({
       status: 'online',
       service: 'FITPULSE Cloudflare Serverless Backend',
