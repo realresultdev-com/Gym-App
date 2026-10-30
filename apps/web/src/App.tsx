@@ -1,7 +1,20 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { UserRole, AuthUser, WorkoutProgram, SetItem, GymMember, NotificationItem } from './types/gym';
+import type {
+  UserRole,
+  AuthUser,
+  WorkoutProgram,
+  SetItem,
+  GymMember,
+  NotificationItem,
+  FeePaymentRecord,
+  MemberFeeProfile,
+  PaymentMethod,
+} from './types/gym';
 import { loadGymState, saveGymState, type GymAppState } from './services/gymStorage';
 import { LoginPage } from './components/LoginPage';
+import { MemberFeesView } from './components/MemberFeesView';
+import { AdminFeesView } from './components/AdminFeesView';
+import { ReceiptModal } from './components/ReceiptModal';
 import {
   IconDashboard,
   IconDumbbell,
@@ -12,6 +25,7 @@ import {
   IconPlay,
   IconPause,
   IconChevronRight,
+  IconCreditCard,
 } from './components/Icons';
 
 export default function App() {
@@ -47,13 +61,187 @@ export default function App() {
   };
 
   // Navigation & Modals
-  const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'admin'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'fees' | 'admin'>('home');
+  const [activeReceiptRecord, setActiveReceiptRecord] = useState<FeePaymentRecord | null>(null);
+  const [activeReceiptProfile, setActiveReceiptProfile] = useState<MemberFeeProfile | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [newProgramModalOpen, setNewProgramModalOpen] = useState(false);
   const [newMemberModalOpen, setNewMemberModalOpen] = useState(false);
   const [broadcastModalOpen, setBroadcastModalOpen] = useState(false);
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [attendanceHistoryOpen, setAttendanceHistoryOpen] = useState(false);
+
+  // -------------------------------------------------------------
+  // Fee Payments & Billing Management
+  // -------------------------------------------------------------
+  const handleMemberPayFee = (
+    amount: number,
+    planName: MemberFeeProfile['planName'],
+    method: PaymentMethod,
+    tenureMonths: number
+  ) => {
+    const invoiceNum = `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    
+    const nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + tenureMonths * 30);
+    const nextDateStr = nextDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    const newRecord: FeePaymentRecord = {
+      id: `pay-${Date.now()}`,
+      memberId: 'usr-member-0001',
+      memberName: gymState.auth?.user?.name || 'Martin Vance',
+      planName,
+      amount,
+      paidDate: todayStr,
+      nextDueDate: nextDateStr,
+      method,
+      invoiceNumber: invoiceNum,
+      status: 'PAID',
+      notes: `Online self-renewal (${tenureMonths} month tenure)`,
+      recordedBy: 'Self-Pay Portal',
+    };
+
+    setGymState((prev) => {
+      const updatedProfiles = prev.feeProfiles.map((p) => {
+        if (p.memberId === 'usr-member-0001') {
+          return {
+            ...p,
+            planName,
+            feeAmount: amount,
+            lastPaymentAmount: amount,
+            lastPaymentDate: todayStr,
+            lastPaymentMethod: method,
+            lastInvoiceNumber: invoiceNum,
+            nextDueDate: nextDateStr,
+            nextDueAmount: amount,
+            status: 'PAID' as const,
+            daysRemaining: tenureMonths * 30,
+          };
+        }
+        return p;
+      });
+
+      return {
+        ...prev,
+        feeProfiles: updatedProfiles,
+        paymentRecords: [newRecord, ...prev.paymentRecords],
+        notifications: [
+          {
+            id: `notif-${Date.now()}`,
+            title: 'Payment Successful',
+            message: `Your payment of $${amount.toFixed(2)} for ${planName} was successful. Invoice: ${invoiceNum}.`,
+            type: 'PAYMENT',
+            createdAt: 'Just now',
+            read: false,
+            author: 'Studio Accounts',
+          },
+          ...prev.notifications,
+        ],
+      };
+    });
+
+    setActiveReceiptRecord(newRecord);
+    setActiveReceiptProfile(
+      gymState.feeProfiles.find((p) => p.memberId === 'usr-member-0001') || null
+    );
+  };
+
+  const handleAdminRecordPayment = (
+    memberId: string,
+    amount: number,
+    planName: MemberFeeProfile['planName'],
+    method: PaymentMethod,
+    tenureMonths: number,
+    notes?: string
+  ) => {
+    const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const invoiceNum = `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    
+    const nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + tenureMonths * 30);
+    const nextDateStr = nextDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    const targetProfile = gymState.feeProfiles.find((p) => p.memberId === memberId);
+    const memberName = targetProfile?.memberName || 'Studio Member';
+
+    const newRecord: FeePaymentRecord = {
+      id: `pay-${Date.now()}`,
+      memberId,
+      memberName,
+      planName,
+      amount,
+      paidDate: todayStr,
+      nextDueDate: nextDateStr,
+      method,
+      invoiceNumber: invoiceNum,
+      status: 'PAID',
+      notes: notes || 'Front desk manual fee collection',
+      recordedBy: gymState.auth?.user?.name || 'Sarah Connor (Admin)',
+    };
+
+    setGymState((prev) => {
+      const updatedProfiles = prev.feeProfiles.map((p) => {
+        if (p.memberId === memberId) {
+          return {
+            ...p,
+            planName,
+            feeAmount: amount,
+            lastPaymentAmount: amount,
+            lastPaymentDate: todayStr,
+            lastPaymentMethod: method,
+            lastInvoiceNumber: invoiceNum,
+            nextDueDate: nextDateStr,
+            nextDueAmount: amount,
+            status: 'PAID' as const,
+            daysRemaining: tenureMonths * 30,
+          };
+        }
+        return p;
+      });
+
+      return {
+        ...prev,
+        feeProfiles: updatedProfiles,
+        paymentRecords: [newRecord, ...prev.paymentRecords],
+        notifications: [
+          {
+            id: `notif-${Date.now()}`,
+            title: 'Fee Payment Received',
+            message: `Payment of $${amount.toFixed(2)} received for ${memberName}. Receipt ${invoiceNum} generated.`,
+            type: 'PAYMENT',
+            createdAt: 'Just now',
+            read: false,
+            author: 'Front Desk POS',
+          },
+          ...prev.notifications,
+        ],
+      };
+    });
+  };
+
+  const handleAdminSendReminder = (
+    _memberId: string,
+    memberName: string,
+    amount: number,
+    dueDate: string
+  ) => {
+    setGymState((prev) => ({
+      ...prev,
+      notifications: [
+        {
+          id: `notif-${Date.now()}`,
+          title: 'Membership Fee Due Reminder',
+          message: `Notice for ${memberName}: Membership fee of $${amount.toFixed(2)} is due on ${dueDate}.`,
+          type: 'PAYMENT',
+          createdAt: 'Just now',
+          read: false,
+          author: 'Accounts Desk',
+        },
+        ...prev.notifications,
+      ],
+    }));
+  };
 
   const [selectedDay, setSelectedDay] = useState(25);
   const [selectedCategory, setSelectedCategory] = useState('All Type');
@@ -569,28 +757,44 @@ export default function App() {
               <span>Dashboard</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('workout')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
-                activeTab === 'workout'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <IconDumbbell className="w-3.5 h-3.5" />
-              <span>Workout</span>
-            </button>
+            {gymState.role !== 'ADMIN' && (
+              <>
+                <button
+                  onClick={() => setActiveTab('workout')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                    activeTab === 'workout'
+                      ? 'bg-white text-slate-900 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <IconDumbbell className="w-3.5 h-3.5" />
+                  <span>Workout</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('attendance')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                    activeTab === 'attendance'
+                      ? 'bg-white text-slate-900 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <IconQrCode className="w-3.5 h-3.5" />
+                  <span>Check-In</span>
+                </button>
+              </>
+            )}
 
             <button
-              onClick={() => setActiveTab('attendance')}
+              onClick={() => setActiveTab('fees')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
-                activeTab === 'attendance'
+                activeTab === 'fees'
                   ? 'bg-white text-slate-900 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <IconQrCode className="w-3.5 h-3.5" />
-              <span>Check-In</span>
+              <IconCreditCard className="w-3.5 h-3.5" />
+              <span>{gymState.role === 'ADMIN' ? 'Fees & Billing' : 'Fees & Plan'}</span>
             </button>
 
             {gymState.role === 'ADMIN' && (
@@ -603,7 +807,7 @@ export default function App() {
                 }`}
               >
                 <IconShield className="w-3.5 h-3.5" />
-                <span>Admin</span>
+                <span>Studio Ops</span>
               </button>
             )}
           </nav>
@@ -673,125 +877,158 @@ export default function App() {
             ADMIN VIEW
         ========================================================== */}
         {gymState.role === 'ADMIN' ? (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Studio Operations</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Membership analytics, access control, and roster</p>
+          activeTab === 'fees' ? (
+            <AdminFeesView
+              feeProfiles={gymState.feeProfiles}
+              paymentRecords={gymState.paymentRecords}
+              onRecordPayment={handleAdminRecordPayment}
+              onSendReminder={handleAdminSendReminder}
+              onViewReceipt={(rec) => {
+                setActiveReceiptRecord(rec);
+                setActiveReceiptProfile(
+                  gymState.feeProfiles.find((p) => p.memberId === rec.memberId) || null
+                );
+              }}
+            />
+          ) : (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Studio Operations</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Membership analytics, access control, and roster</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setActiveTab('fees')}
+                    className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer flex items-center space-x-1.5"
+                  >
+                    <IconCreditCard className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Fee Collections</span>
+                  </button>
+                  <button
+                    onClick={() => setNewMemberModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition cursor-pointer"
+                  >
+                    New Member
+                  </button>
+                  <button
+                    onClick={() => setBroadcastModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    Send Announcement
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setNewMemberModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition cursor-pointer"
+
+              {/* Metrics Overview Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
+                  <p className="text-xs font-medium text-slate-500">Active Members</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">{activeMembersCount}</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Verified accounts</p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
+                  <p className="text-xs font-medium text-slate-500">Training Routines</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">{gymState.programs.length}</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Active in library</p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
+                  <p className="text-xs font-medium text-slate-500">Today Check-Ins</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">{todayCheckInCount}</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Floor visits today</p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
+                  <p className="text-xs font-medium text-slate-500">Monthly Revenue</p>
+                  <p className="text-2xl font-bold text-slate-900 mt-1">${dynamicRevenue.toLocaleString()}</p>
+                  <p className="text-[11px] text-slate-400 mt-1">Active subscriptions</p>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                  onClick={() => setQrModalOpen(true)}
+                  className="p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 transition cursor-pointer flex items-center justify-between"
                 >
-                  New Member
-                </button>
-                <button
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-900">Front Desk QR Scanner</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">Generate active entrance code for turnstiles</p>
+                  </div>
+                  <IconChevronRight className="w-4 h-4 text-slate-400" />
+                </div>
+
+                <div
+                  onClick={() => setActiveTab('fees')}
+                  className="p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 transition cursor-pointer flex items-center justify-between"
+                >
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-900">Fee Collections & Ledger</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">Audit upcoming dues, last payments, and log receipts</p>
+                  </div>
+                  <IconChevronRight className="w-4 h-4 text-slate-400" />
+                </div>
+
+                <div
                   onClick={() => setBroadcastModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold text-xs hover:bg-slate-50 transition cursor-pointer"
+                  className="p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 transition cursor-pointer flex items-center justify-between"
                 >
-                  Send Announcement
-                </button>
-              </div>
-            </div>
-
-            {/* Metrics Overview Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-                <p className="text-xs font-medium text-slate-500">Active Members</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{activeMembersCount}</p>
-                <p className="text-[11px] text-slate-400 mt-1">Verified accounts</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-                <p className="text-xs font-medium text-slate-500">Training Routines</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{gymState.programs.length}</p>
-                <p className="text-[11px] text-slate-400 mt-1">Active in library</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-                <p className="text-xs font-medium text-slate-500">Today Check-Ins</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">{todayCheckInCount}</p>
-                <p className="text-[11px] text-slate-400 mt-1">Floor visits today</p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-                <p className="text-xs font-medium text-slate-500">Monthly Revenue</p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">${dynamicRevenue.toLocaleString()}</p>
-                <p className="text-[11px] text-slate-400 mt-1">Active subscriptions</p>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div
-                onClick={() => setQrModalOpen(true)}
-                className="p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 transition cursor-pointer flex items-center justify-between"
-              >
-                <div>
-                  <h4 className="text-sm font-semibold text-slate-900">Front Desk QR Scanner</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Generate active entrance code for turnstiles</p>
+                  <div>
+                    <h4 className="text-sm font-semibold text-slate-900">Studio Announcement</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">Notify members regarding schedules or facility updates</p>
+                  </div>
+                  <IconChevronRight className="w-4 h-4 text-slate-400" />
                 </div>
-                <IconChevronRight className="w-4 h-4 text-slate-400" />
               </div>
 
-              <div
-                onClick={() => setBroadcastModalOpen(true)}
-                className="p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 transition cursor-pointer flex items-center justify-between"
-              >
-                <div>
-                  <h4 className="text-sm font-semibold text-slate-900">Studio Announcement</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Notify members regarding schedules or facility updates</p>
+              {/* Member Directory */}
+              <div className="rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-sm">
+                <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-900">Member Directory</h3>
+                    <p className="text-xs text-slate-500">Registered athletes and active plans</p>
+                  </div>
+                  <span className="text-xs font-medium text-slate-500">
+                    {gymState.members.length} members
+                  </span>
                 </div>
-                <IconChevronRight className="w-4 h-4 text-slate-400" />
-              </div>
-            </div>
 
-            {/* Member Directory */}
-            <div className="rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-sm">
-              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900">Member Directory</h3>
-                  <p className="text-xs text-slate-500">Registered athletes and active plans</p>
-                </div>
-                <span className="text-xs font-medium text-slate-500">
-                  {gymState.members.length} members
-                </span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-slate-100 text-slate-500 font-medium">
-                      <th className="py-3 px-4">Member</th>
-                      <th className="py-3 px-4">Plan</th>
-                      <th className="py-3 px-4">Target Goal</th>
-                      <th className="py-3 px-4">Streak</th>
-                      <th className="py-3 px-4">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {gymState.members.map((mem) => (
-                      <tr key={mem.id} className="hover:bg-slate-50/70 transition">
-                        <td className="py-3 px-4">
-                          <p className="font-semibold text-slate-900">{mem.name}</p>
-                          <p className="text-[11px] text-slate-400">{mem.email}</p>
-                        </td>
-                        <td className="py-3 px-4 text-slate-700">{mem.plan}</td>
-                        <td className="py-3 px-4 text-slate-500 max-w-xs truncate">{mem.fitnessGoal}</td>
-                        <td className="py-3 px-4 text-slate-700 font-medium">{mem.streakDays} days</td>
-                        <td className="py-3 px-4">
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-700">
-                            {mem.status}
-                          </span>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-100 text-slate-500 font-medium">
+                        <th className="py-3 px-4">Member</th>
+                        <th className="py-3 px-4">Plan</th>
+                        <th className="py-3 px-4">Target Goal</th>
+                        <th className="py-3 px-4">Streak</th>
+                        <th className="py-3 px-4">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {gymState.members.map((mem) => (
+                        <tr key={mem.id} className="hover:bg-slate-50/70 transition">
+                          <td className="py-3 px-4">
+                            <p className="font-semibold text-slate-900">{mem.name}</p>
+                            <p className="text-[11px] text-slate-400">{mem.email}</p>
+                          </td>
+                          <td className="py-3 px-4 text-slate-700">{mem.plan}</td>
+                          <td className="py-3 px-4 text-slate-500 max-w-xs truncate">{mem.fitnessGoal}</td>
+                          <td className="py-3 px-4 text-slate-700 font-medium">{mem.streakDays} days</td>
+                          <td className="py-3 px-4">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-700">
+                              {mem.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
+          )
         ) : gymState.role === 'TRAINER' ? (
           /* =========================================================
               TRAINER VIEW
@@ -861,6 +1098,23 @@ export default function App() {
               MEMBER VIEW (Clean, Responsive Multi-Column Layout)
           ========================================================== */
           <div>
+            {activeTab === 'fees' && (
+              <MemberFeesView
+                profile={
+                  gymState.feeProfiles.find((p) => p.memberId === 'usr-member-0001') ||
+                  gymState.feeProfiles[0]
+                }
+                history={gymState.paymentRecords.filter((r) => r.memberId === 'usr-member-0001')}
+                onPayFee={handleMemberPayFee}
+                onViewReceipt={(rec) => {
+                  setActiveReceiptRecord(rec);
+                  setActiveReceiptProfile(
+                    gymState.feeProfiles.find((p) => p.memberId === rec.memberId) || null
+                  );
+                }}
+              />
+            )}
+
             {activeTab === 'home' && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
@@ -1352,6 +1606,16 @@ export default function App() {
         </button>
 
         <button
+          onClick={() => setActiveTab('fees')}
+          className={`p-2 rounded-xl text-xs font-semibold flex items-center space-x-1 ${
+            activeTab === 'fees' ? 'text-slate-900 bg-slate-100' : 'text-slate-500'
+          }`}
+        >
+          <IconCreditCard className="w-4 h-4" />
+          <span>Fees</span>
+        </button>
+
+        <button
           onClick={handleSignOut}
           className="p-2 rounded-xl text-slate-500 hover:text-rose-600 transition"
         >
@@ -1744,6 +2008,20 @@ export default function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* =========================================================
+          TAX INVOICE & RECEIPT MODAL
+      ========================================================== */}
+      {activeReceiptRecord && (
+        <ReceiptModal
+          record={activeReceiptRecord}
+          profile={activeReceiptProfile}
+          onClose={() => {
+            setActiveReceiptRecord(null);
+            setActiveReceiptProfile(null);
+          }}
+        />
       )}
 
     </div>

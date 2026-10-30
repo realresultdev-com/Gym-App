@@ -7,6 +7,8 @@ import type {
   AttendanceRecord,
   GymMember,
   NotificationItem,
+  MemberFeeProfile,
+  FeePaymentRecord,
 } from '../types/gym';
 
 export interface GymAppState {
@@ -33,9 +35,11 @@ export interface GymAppState {
   attendanceHistory: AttendanceRecord[];
   members: GymMember[];
   notifications: NotificationItem[];
+  feeProfiles: MemberFeeProfile[];
+  paymentRecords: FeePaymentRecord[];
 }
 
-const STORAGE_KEY = 'FITPULSE_GYM_STATE_V4';
+const STORAGE_KEY = 'FITPULSE_GYM_STATE_V5';
 
 const stripEmojis = (str: string) => str.replace(/[\u{1F300}-\u{1FAFF}]|[\u{2600}-\u{27BF}]/gu, '').trim();
 
@@ -191,12 +195,191 @@ export const INITIAL_SETS: SetItem[] = [
   { id: 'set-4', set: 4, reps: 8, weight: 'Bodyweight', completed: false },
 ];
 
+export const INITIAL_FEE_PROFILES: MemberFeeProfile[] = [
+  {
+    memberId: 'usr-member-0001',
+    memberName: 'Martin Vance',
+    memberEmail: 'member@gym.com',
+    memberPhone: '+1 555-0003',
+    planName: 'Quarterly Pro Athlete',
+    feeAmount: 240,
+    billingFrequency: 'Quarterly',
+    lastPaymentDate: '15 Aug 2026',
+    lastPaymentAmount: 240,
+    lastPaymentMethod: 'UPI / QR',
+    lastInvoiceNumber: 'INV-2026-0815',
+    nextDueDate: '15 Nov 2026',
+    nextDueAmount: 240,
+    status: 'PAID',
+    daysRemaining: 15,
+    autoRenew: true,
+  },
+  {
+    memberId: 'usr-member-0002',
+    memberName: 'Elena Rostova',
+    memberEmail: 'elena@example.com',
+    memberPhone: '+1 555-0004',
+    planName: 'VIP Elite Annual',
+    feeAmount: 799,
+    billingFrequency: 'Annual',
+    lastPaymentDate: '10 Jun 2026',
+    lastPaymentAmount: 799,
+    lastPaymentMethod: 'Credit Card',
+    lastInvoiceNumber: 'INV-2026-0610',
+    nextDueDate: '10 Jun 2027',
+    nextDueAmount: 799,
+    status: 'PAID',
+    daysRemaining: 222,
+    autoRenew: true,
+  },
+  {
+    memberId: 'usr-member-0003',
+    memberName: 'Marcus Brody',
+    memberEmail: 'marcus@example.com',
+    memberPhone: '+1 555-0005',
+    planName: 'Monthly All-Access',
+    feeAmount: 89,
+    billingFrequency: 'Monthly',
+    lastPaymentDate: '01 Oct 2026',
+    lastPaymentAmount: 89,
+    lastPaymentMethod: 'Cash Desk',
+    lastInvoiceNumber: 'INV-2026-1001',
+    nextDueDate: '01 Nov 2026',
+    nextDueAmount: 89,
+    status: 'DUE_SOON',
+    daysRemaining: 1,
+    autoRenew: false,
+  },
+  {
+    memberId: 'usr-member-0004',
+    memberName: "Liam O'Connor",
+    memberEmail: 'liam@example.com',
+    memberPhone: '+1 555-0006',
+    planName: 'Monthly All-Access',
+    feeAmount: 89,
+    billingFrequency: 'Monthly',
+    lastPaymentDate: '18 Sep 2026',
+    lastPaymentAmount: 89,
+    lastPaymentMethod: 'Credit Card',
+    lastInvoiceNumber: 'INV-2026-0918',
+    nextDueDate: '18 Oct 2026',
+    nextDueAmount: 89,
+    status: 'OVERDUE',
+    daysRemaining: -12,
+    autoRenew: false,
+  },
+  {
+    memberId: 'usr-member-0005',
+    memberName: 'Sophie Chen',
+    memberEmail: 'sophie@example.com',
+    memberPhone: '+1 555-0007',
+    planName: 'Quarterly Pro Athlete',
+    feeAmount: 240,
+    billingFrequency: 'Quarterly',
+    lastPaymentDate: '28 Jul 2026',
+    lastPaymentAmount: 240,
+    lastPaymentMethod: 'Bank Transfer',
+    lastInvoiceNumber: 'INV-2026-0728',
+    nextDueDate: '28 Oct 2026',
+    nextDueAmount: 240,
+    status: 'OVERDUE',
+    daysRemaining: -2,
+    autoRenew: false,
+  },
+];
+
+export const INITIAL_PAYMENT_RECORDS: FeePaymentRecord[] = [
+  {
+    id: 'pay-001',
+    memberId: 'usr-member-0001',
+    memberName: 'Martin Vance',
+    planName: 'Quarterly Pro Athlete',
+    amount: 240,
+    paidDate: '15 Aug 2026',
+    nextDueDate: '15 Nov 2026',
+    method: 'UPI / QR',
+    invoiceNumber: 'INV-2026-0815',
+    status: 'PAID',
+    notes: 'Quarterly cycle renewal - Verified online payment',
+    recordedBy: 'Self-Pay Portal',
+  },
+  {
+    id: 'pay-002',
+    memberId: 'usr-member-0001',
+    memberName: 'Martin Vance',
+    planName: 'Quarterly Pro Athlete',
+    amount: 240,
+    paidDate: '15 May 2026',
+    nextDueDate: '15 Aug 2026',
+    method: 'Credit Card',
+    invoiceNumber: 'INV-2026-0515',
+    status: 'PAID',
+    notes: 'Initial registration fee & access card',
+    recordedBy: 'Sarah Connor (Admin)',
+  },
+  {
+    id: 'pay-003',
+    memberId: 'usr-member-0002',
+    memberName: 'Elena Rostova',
+    planName: 'VIP Elite Annual',
+    amount: 799,
+    paidDate: '10 Jun 2026',
+    nextDueDate: '10 Jun 2027',
+    method: 'Credit Card',
+    invoiceNumber: 'INV-2026-0610',
+    status: 'PAID',
+    notes: 'Annual upfront VIP package with locker & towel service',
+    recordedBy: 'Sarah Connor (Admin)',
+  },
+  {
+    id: 'pay-004',
+    memberId: 'usr-member-0003',
+    memberName: 'Marcus Brody',
+    planName: 'Monthly All-Access',
+    amount: 89,
+    paidDate: '01 Oct 2026',
+    nextDueDate: '01 Nov 2026',
+    method: 'Cash Desk',
+    invoiceNumber: 'INV-2026-1001',
+    status: 'PAID',
+    notes: 'Front desk cash payment received by desk manager',
+    recordedBy: 'Desk Manager',
+  },
+  {
+    id: 'pay-005',
+    memberId: 'usr-member-0004',
+    memberName: "Liam O'Connor",
+    planName: 'Monthly All-Access',
+    amount: 89,
+    paidDate: '18 Sep 2026',
+    nextDueDate: '18 Oct 2026',
+    method: 'Credit Card',
+    invoiceNumber: 'INV-2026-0918',
+    status: 'PAID',
+    notes: 'Monthly recurring cycle',
+    recordedBy: 'Payment Gateway',
+  },
+  {
+    id: 'pay-006',
+    memberId: 'usr-member-0005',
+    memberName: 'Sophie Chen',
+    planName: 'Quarterly Pro Athlete',
+    amount: 240,
+    paidDate: '28 Jul 2026',
+    nextDueDate: '28 Oct 2026',
+    method: 'Bank Transfer',
+    invoiceNumber: 'INV-2026-0728',
+    status: 'PAID',
+    notes: 'Direct NEFT transfer',
+    recordedBy: 'Sarah Connor (Admin)',
+  },
+];
+
 export function loadGymState(): GymAppState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Ensure any newly added keys exist
       return {
         auth: parsed.auth || {
           isAuthenticated: true,
@@ -219,7 +402,7 @@ export function loadGymState(): GymAppState {
         activeWorkout: parsed.activeWorkout || {
           programId: 'prog-pullups-01',
           programTitle: '1 Pull-Ups',
-          timerSeconds: 17405, // 04:50:05
+          timerSeconds: 17405,
           isRunning: true,
           sets: INITIAL_SETS,
         },
@@ -230,6 +413,8 @@ export function loadGymState(): GymAppState {
           ...n,
           title: stripEmojis(n.title),
         })),
+        feeProfiles: parsed.feeProfiles?.length ? parsed.feeProfiles : INITIAL_FEE_PROFILES,
+        paymentRecords: parsed.paymentRecords?.length ? parsed.paymentRecords : INITIAL_PAYMENT_RECORDS,
       };
     }
   } catch (e) {
@@ -266,6 +451,8 @@ export function loadGymState(): GymAppState {
     attendanceHistory: INITIAL_ATTENDANCE,
     members: INITIAL_MEMBERS,
     notifications: INITIAL_NOTIFICATIONS,
+    feeProfiles: INITIAL_FEE_PROFILES,
+    paymentRecords: INITIAL_PAYMENT_RECORDS,
   };
 }
 
@@ -276,4 +463,3 @@ export function saveGymState(state: GymAppState): void {
     console.error('Error saving gym state to localStorage:', e);
   }
 }
-

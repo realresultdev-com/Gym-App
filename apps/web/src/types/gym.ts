@@ -77,3 +77,42 @@ export interface NotificationItem {
   author: string;
 }
 
+export type PaymentMethod = 'Credit Card' | 'UPI / QR' | 'Cash Desk' | 'Bank Transfer' | 'Apple Pay';
+
+export type FeeStatus = 'PAID' | 'DUE_SOON' | 'OVERDUE';
+
+export interface FeePaymentRecord {
+  id: string;
+  memberId: string;
+  memberName: string;
+  planName: string;
+  amount: number;
+  paidDate: string;
+  nextDueDate: string;
+  method: PaymentMethod;
+  invoiceNumber: string;
+  status: 'PAID' | 'PENDING' | 'OVERDUE';
+  notes?: string;
+  recordedBy?: string;
+}
+
+export interface MemberFeeProfile {
+  memberId: string;
+  memberName: string;
+  memberEmail: string;
+  memberPhone?: string;
+  planName: 'Monthly All-Access' | 'Quarterly Pro Athlete' | 'VIP Elite Annual';
+  feeAmount: number;
+  billingFrequency: 'Monthly' | 'Quarterly' | 'Annual';
+  lastPaymentDate: string;
+  lastPaymentAmount: number;
+  lastPaymentMethod: PaymentMethod;
+  lastInvoiceNumber: string;
+  nextDueDate: string;
+  nextDueAmount: number;
+  status: FeeStatus;
+  daysRemaining: number;
+  autoRenew: boolean;
+}
+
+
