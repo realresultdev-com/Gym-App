@@ -8,7 +8,6 @@ import {
   IconQrCode,
   IconShield,
   IconBell,
-  IconCheck,
   IconClose,
   IconPlay,
   IconPause,
@@ -45,12 +44,10 @@ export default function App() {
         user: null,
       },
     }));
-    setRoleModalOpen(false);
   };
 
   // Navigation & Modals
   const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'admin'>('home');
-  const [roleModalOpen, setRoleModalOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [newProgramModalOpen, setNewProgramModalOpen] = useState(false);
   const [newMemberModalOpen, setNewMemberModalOpen] = useState(false);
@@ -614,14 +611,10 @@ export default function App() {
           {/* User Profile, Notifications & Role Menu */}
           <div className="flex items-center space-x-3">
             
-            {/* Role Switcher Pill */}
-            <button
-              onClick={() => setRoleModalOpen(true)}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white hover:bg-slate-50 transition cursor-pointer text-slate-700 flex items-center space-x-1.5"
-            >
-              <span>{gymState.role === 'ADMIN' ? 'Admin' : gymState.role === 'TRAINER' ? 'Trainer' : 'Member'}</span>
-              <span className="text-[10px] text-slate-400">▾</span>
-            </button>
+            {/* Role Badge */}
+            <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/80">
+              {gymState.role === 'ADMIN' ? 'Admin' : gymState.role === 'TRAINER' ? 'Trainer' : 'Member'}
+            </span>
 
             {/* Notification Bell */}
             <button
@@ -636,10 +629,7 @@ export default function App() {
             </button>
 
             {/* Profile Avatar */}
-            <div
-              className="flex items-center space-x-2 pl-2 border-l border-slate-200 cursor-pointer"
-              onClick={() => setRoleModalOpen(true)}
-            >
+            <div className="flex items-center space-x-2 pl-2 border-l border-slate-200">
               <img
                 src={
                   gymState.role === 'MEMBER'
@@ -653,7 +643,7 @@ export default function App() {
               />
               <div className="hidden lg:block text-left">
                 <p className="text-xs font-semibold text-slate-900 leading-tight">
-                  {gymState.role === 'MEMBER' ? 'Martin Vance' : gymState.role === 'TRAINER' ? 'Alex Hunter' : 'Sarah Connor'}
+                  {gymState.auth?.user?.name || (gymState.role === 'MEMBER' ? 'Martin Vance' : gymState.role === 'TRAINER' ? 'Alex Hunter' : 'Sarah Connor')}
                 </p>
                 <p className="text-[10px] text-slate-500">
                   {gymState.role === 'MEMBER' ? 'Member' : gymState.role === 'TRAINER' ? 'Trainer' : 'Director'}
@@ -1362,10 +1352,10 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => setRoleModalOpen(true)}
-          className="p-2 rounded-xl text-slate-500 hover:text-slate-900"
+          onClick={handleSignOut}
+          className="p-2 rounded-xl text-slate-500 hover:text-rose-600 transition"
         >
-          <span className="text-xs font-semibold">Account</span>
+          <span className="text-xs font-semibold">Sign Out</span>
         </button>
       </nav>
 
@@ -1429,63 +1419,7 @@ export default function App() {
         </div>
       )}
 
-      {/* =========================================================
-          ROLE SWITCHER MODAL
-      ========================================================== */}
-      {roleModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-2xl p-6 border border-slate-200 shadow-xl space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-semibold text-slate-900">Switch Profile</h3>
-                <p className="text-xs text-slate-500">Active account view</p>
-              </div>
-              <button
-                onClick={() => setRoleModalOpen(false)}
-                className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200"
-              >
-                <IconClose className="w-3.5 h-3.5" />
-              </button>
-            </div>
 
-            <div className="space-y-2">
-              {[
-                { role: 'MEMBER' as const, name: 'Martin Vance', label: 'Member View', desc: 'Workout tracker, daily programs, and attendance' },
-                { role: 'TRAINER' as const, name: 'Alex Hunter', label: 'Trainer View', desc: 'Assigned athletes and program assignment' },
-                { role: 'ADMIN' as const, name: 'Sarah Connor', label: 'Admin View', desc: 'Studio analytics, member roster, and announcements' },
-              ].map((item) => (
-                <div
-                  key={item.role}
-                  onClick={() => { setGymState((prev) => ({ ...prev, role: item.role })); setRoleModalOpen(false); }}
-                  className={`p-3.5 rounded-xl border flex items-center justify-between cursor-pointer transition ${
-                    gymState.role === item.role
-                      ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
-                      : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-900'
-                  }`}
-                >
-                  <div>
-                    <p className="text-xs font-semibold">{item.name} ({item.label})</p>
-                    <p className={`text-[11px] mt-0.5 ${gymState.role === item.role ? 'text-slate-300' : 'text-slate-500'}`}>
-                      {item.desc}
-                    </p>
-                  </div>
-                  {gymState.role === item.role && <IconCheck className="w-4 h-4 text-amber-400" />}
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
-              <span className="text-slate-500 font-medium">Want to switch account?</span>
-              <button
-                onClick={handleSignOut}
-                className="text-rose-600 font-semibold hover:underline cursor-pointer"
-              >
-                Log Out
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* =========================================================
           ADD PROGRAM MODAL
