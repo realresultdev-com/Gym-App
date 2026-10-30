@@ -1,12 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ExerciseGuide } from '../types/gym';
 import { FOUNDATIONAL_EXERCISES } from '../data/exerciseGuides';
-import {
-  IconPlay,
-  IconCheckCircle,
-  IconAlertCircle,
-  IconDumbbell,
-} from './Icons';
+import { IconCheckCircle } from './Icons';
 
 interface ExerciseCourseViewProps {
   onLogCompletedSession?: (exerciseName: string, sets: number, reps: number) => void;
@@ -14,40 +9,36 @@ interface ExerciseCourseViewProps {
 
 export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseViewProps) {
   const [selectedExercise, setSelectedExercise] = useState<ExerciseGuide>(FOUNDATIONAL_EXERCISES[0]);
-  const [activeStepTab, setActiveStepTab] = useState<'ANIMATION' | 'STEP_1' | 'STEP_2'>('ANIMATION');
-  const [animationFrame, setAnimationFrame] = useState<'UP' | 'DOWN'>('UP');
-
-  // Practice Mode State
+  const [activeTab, setActiveTab] = useState<'ANIMATION' | 'STEP_1' | 'STEP_2' | 'STEP_3'>('ANIMATION');
+  const [animationFrame, setAnimationFrame] = useState<'TOP' | 'BOTTOM'>('TOP');
+  const [feedbackToast, setFeedbackToast] = useState('');
   const [practiceActive, setPracticeActive] = useState(false);
   const [practiceSets, setPracticeSets] = useState(1);
-  const [practiceRepsCompleted, setPracticeRepsCompleted] = useState(0);
-  const [feedbackToast, setFeedbackToast] = useState('');
 
-  // Looping animation ticker simulating Spotebi gif demonstration
+  // Smooth continuous animation cycling between top and bottom positions
   useEffect(() => {
-    if (activeStepTab !== 'ANIMATION') return;
+    if (activeTab !== 'ANIMATION') return;
 
     const interval = setInterval(() => {
-      setAnimationFrame((prev) => (prev === 'UP' ? 'DOWN' : 'UP'));
-    }, 1200);
+      setAnimationFrame((prev) => (prev === 'TOP' ? 'BOTTOM' : 'TOP'));
+    }, 1100);
 
     return () => clearInterval(interval);
-  }, [activeStepTab]);
+  }, [activeTab]);
 
   const handleFinishPracticeSet = () => {
-    const reps = practiceRepsCompleted + 10;
-    setPracticeRepsCompleted(reps);
     if (practiceSets < 3) {
       setPracticeSets((s) => s + 1);
-      setFeedbackToast(`Set ${practiceSets} completed! 45s rest timer started.`);
+      setFeedbackToast(`Set ${practiceSets} logged!`);
     } else {
       setPracticeActive(false);
-      setFeedbackToast(`Exercise Completed! 3 sets of ${selectedExercise.name} logged.`);
+      setPracticeSets(1);
+      setFeedbackToast(`3 sets of ${selectedExercise.name} completed!`);
       if (onLogCompletedSession) {
-        onLogCompletedSession(selectedExercise.name, 3, reps);
+        onLogCompletedSession(selectedExercise.name, 3, 30);
       }
     }
-    setTimeout(() => setFeedbackToast(''), 4000);
+    setTimeout(() => setFeedbackToast(''), 3000);
   };
 
   return (
@@ -55,31 +46,25 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
       
       {/* Toast Feedback */}
       {feedbackToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-semibold animate-in slide-in-from-bottom-3 border border-slate-700">
-          <IconCheckCircle className="w-4 h-4 text-amber-400" />
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-semibold animate-in slide-in-from-bottom-3 border border-slate-700">
+          <IconCheckCircle className="w-4 h-4 text-emerald-400" />
           <span>{feedbackToast}</span>
         </div>
       )}
 
-      {/* Header & Course Selection Ribbon */}
+      {/* Header & Exercise Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-900 text-amber-400">
-              Exercise Academy
-            </span>
-            <span className="text-xs text-slate-500 font-medium">Course 01 • Step-by-Step Technique</span>
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight mt-1">
-            {selectedExercise.name} Guide
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+            {selectedExercise.name}
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Spotebi-style biomechanical breakdown with visual animations, movement cues & muscle anatomy
+            Step-by-step visual demonstration and motion technique
           </p>
         </div>
 
         {/* Exercise Quick Switcher */}
-        <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-2xl border border-slate-200/80">
+        <div className="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200/80">
           {FOUNDATIONAL_EXERCISES.map((ex) => {
             const isSelected = selectedExercise.id === ex.id;
             return (
@@ -87,7 +72,7 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
                 key={ex.id}
                 onClick={() => {
                   setSelectedExercise(ex);
-                  setActiveStepTab('ANIMATION');
+                  setActiveTab('ANIMATION');
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
                   isSelected
@@ -102,33 +87,25 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
         </div>
       </div>
 
-      {/* =========================================================
-          HERO ANIMATED VISUAL PLAYER (Spotebi Style Loop / Steps)
-      ========================================================== */}
+      {/* Hero Motion Animation Player */}
       <div className="rounded-3xl bg-white border border-slate-200/90 shadow-sm overflow-hidden">
-        
-        {/* Visual Viewport Header */}
+        {/* Navigation Tabs */}
         <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
-          <span className="text-sm font-bold text-slate-900 tracking-tight">
-            {selectedExercise.name} Movement Demonstration
-          </span>
-
-          {/* Mode Switcher Tabs */}
           <div className="flex items-center space-x-1 bg-white p-1 rounded-xl border border-slate-200 shadow-xs">
             <button
-              onClick={() => setActiveStepTab('ANIMATION')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                activeStepTab === 'ANIMATION'
+              onClick={() => setActiveTab('ANIMATION')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                activeTab === 'ANIMATION'
                   ? 'bg-slate-900 text-white'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Animated Video Loop
+              Motion Animation
             </button>
             <button
-              onClick={() => setActiveStepTab('STEP_1')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                activeStepTab === 'STEP_1'
+              onClick={() => setActiveTab('STEP_1')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                activeTab === 'STEP_1'
                   ? 'bg-slate-900 text-white'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
@@ -136,308 +113,211 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
               Step 1: Setup
             </button>
             <button
-              onClick={() => setActiveStepTab('STEP_2')}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                activeStepTab === 'STEP_2'
+              onClick={() => setActiveTab('STEP_2')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                activeTab === 'STEP_2'
                   ? 'bg-slate-900 text-white'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Step 2: Lowered
             </button>
+            <button
+              onClick={() => setActiveTab('STEP_3')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                activeTab === 'STEP_3'
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Step 3: Lockout
+            </button>
           </div>
+
+          <span className="text-xs font-semibold text-slate-400 hidden sm:inline-block">
+            {activeTab === 'ANIMATION' ? 'Continuous Movement' : activeTab.replace('_', ' ')}
+          </span>
         </div>
 
-        {/* Visual Stage */}
-        <div className="relative p-6 sm:p-10 bg-white flex flex-col items-center justify-center min-h-[320px] select-none">
+        {/* Visual Display Stage */}
+        <div className="relative p-6 sm:p-10 bg-white flex flex-col items-center justify-center min-h-[380px] select-none">
           
-          {/* Animated Video Simulation Mode */}
-          {activeStepTab === 'ANIMATION' && (
-            <div className="flex flex-col items-center justify-center max-w-lg w-full">
-              <div className="relative w-full aspect-[16/10] max-h-72 bg-white rounded-3xl border border-slate-200/80 shadow-md p-4 flex items-center justify-center overflow-hidden">
-                {/* Visual Position Graphic */}
-                <div className={`transition-all duration-500 ease-in-out transform flex flex-col items-center justify-center w-full h-full ${
-                  animationFrame === 'DOWN' ? 'translate-y-4 scale-95' : 'translate-y-0 scale-100'
-                }`}>
-                  <img
-                    src={animationFrame === 'DOWN' ? '/exercises/pushup-steps-guide.png' : '/exercises/pushup-step1.png'}
-                    alt="Push-Up Visual"
-                    className="max-h-56 max-w-full object-contain filter contrast-105"
-                  />
-                </div>
+          {/* Animated Motion Simulation */}
+          {activeTab === 'ANIMATION' && (
+            <div className="w-full max-w-2xl flex flex-col items-center justify-center">
+              <div className="w-full aspect-[16/9] max-h-96 bg-white rounded-3xl p-4 flex items-center justify-center overflow-hidden">
+                <img
+                  src={animationFrame === 'TOP' ? '/exercises/pushup-step1-top.jpg' : '/exercises/pushup-step2-bottom.jpg'}
+                  alt="Push-Up Movement"
+                  className="max-h-80 max-w-full object-contain transition-all duration-700 ease-in-out"
+                />
               </div>
             </div>
           )}
 
-          {/* Still Frame Step 1 */}
-          {activeStepTab === 'STEP_1' && (
-            <div className="flex flex-col items-center max-w-lg w-full space-y-4">
-              <div className="w-full aspect-[16/10] max-h-72 bg-white rounded-3xl border border-slate-200/80 shadow-md p-6 flex items-center justify-center">
+          {/* Still Frame: Step 1 */}
+          {activeTab === 'STEP_1' && (
+            <div className="w-full max-w-2xl flex flex-col items-center space-y-3">
+              <div className="w-full aspect-[16/9] max-h-96 bg-white rounded-3xl p-4 flex items-center justify-center overflow-hidden">
                 <img
-                  src="/exercises/pushup-step1.png"
-                  alt="Push-Up Step 1 Plank Position"
-                  className="max-h-56 max-w-full object-contain"
+                  src="/exercises/pushup-step1-top.jpg"
+                  alt="Step 1 Setup"
+                  className="max-h-80 max-w-full object-contain"
                 />
               </div>
-              <div className="text-center space-y-1">
-                <h4 className="text-sm font-bold text-slate-900">Step 1: Starting High Plank Alignment</h4>
-                <p className="text-xs text-slate-500">
-                  Palms flat under shoulders, spine in neutral alignment, core braced, toes gripping the floor.
-                </p>
-              </div>
+              <p className="text-xs font-semibold text-slate-600 text-center">
+                Step 1: High plank position with palms flat under shoulders and rigid torso.
+              </p>
             </div>
           )}
 
-          {/* Still Frame Step 2 */}
-          {activeStepTab === 'STEP_2' && (
-            <div className="flex flex-col items-center max-w-lg w-full space-y-4">
-              <div className="w-full aspect-[16/10] max-h-72 bg-white rounded-3xl border border-slate-200/80 shadow-md p-6 flex items-center justify-center">
+          {/* Still Frame: Step 2 */}
+          {activeTab === 'STEP_2' && (
+            <div className="w-full max-w-2xl flex flex-col items-center space-y-3">
+              <div className="w-full aspect-[16/9] max-h-96 bg-white rounded-3xl p-4 flex items-center justify-center overflow-hidden">
                 <img
-                  src="/exercises/pushup-steps-guide.png"
-                  alt="Push-Up Step 2 Chest to Ground"
-                  className="max-h-56 max-w-full object-contain"
+                  src="/exercises/pushup-step2-bottom.jpg"
+                  alt="Step 2 Descent"
+                  className="max-h-80 max-w-full object-contain"
                 />
               </div>
-              <div className="text-center space-y-1">
-                <h4 className="text-sm font-bold text-slate-900">Step 2: The Lowering (Chest to Floor)</h4>
-                <p className="text-xs text-slate-500">
-                  Elbows tucked at a 45-degree angle, chest hovering 1 to 2 inches off the ground without sagging the lower back.
-                </p>
+              <p className="text-xs font-semibold text-slate-600 text-center">
+                Step 2: Lower chest until hovering just above the floor, elbows angled at 45°.
+              </p>
+            </div>
+          )}
+
+          {/* Still Frame: Step 3 */}
+          {activeTab === 'STEP_3' && (
+            <div className="w-full max-w-2xl flex flex-col items-center space-y-3">
+              <div className="w-full aspect-[16/9] max-h-96 bg-white rounded-3xl p-4 flex items-center justify-center overflow-hidden">
+                <img
+                  src="/exercises/pushup-step1-top.jpg"
+                  alt="Step 3 Lockout"
+                  className="max-h-80 max-w-full object-contain"
+                />
               </div>
+              <p className="text-xs font-semibold text-slate-600 text-center">
+                Step 3: Press firmly through palms to return to starting high plank.
+              </p>
             </div>
           )}
 
         </div>
-
       </div>
 
-      {/* =========================================================
-          STEP-BY-STEP DETAILED INSTRUCTIONS (Spotebi Guide Style)
-      ========================================================== */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-bold text-slate-900 tracking-tight">Step-by-Step Exercise Instructions</h3>
+      {/* Step-by-Step Clear Visual Cards (90% Visual, 10% Text) */}
+      <div className="space-y-3">
+        <h3 className="text-base font-bold text-slate-900 tracking-tight">Movement Steps</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {selectedExercise.steps.map((step) => (
-            <div
-              key={step.stepNumber}
-              className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between space-y-4"
-            >
-              <div className="space-y-3">
-                
-                {/* Step Image Thumbnail */}
-                <div className="w-full h-36 bg-slate-50 rounded-2xl border border-slate-200/70 p-2 flex items-center justify-center overflow-hidden">
-                  <img
-                    src={step.imageUrl}
-                    alt={step.title}
-                    className="max-h-full max-w-full object-contain filter contrast-105"
-                  />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <span className="w-6 h-6 rounded-full bg-slate-900 text-white font-number font-bold text-xs flex items-center justify-center shrink-0">
-                    {step.stepNumber}
-                  </span>
-                  <h4 className="text-sm font-bold text-slate-900">{step.title}</h4>
-                </div>
-
-                <p className="text-xs text-slate-600 leading-relaxed">{step.instruction}</p>
-              </div>
-
-              {/* Coach Cue Badge */}
-              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 font-medium space-y-0.5">
-                <span className="font-bold text-amber-950 uppercase tracking-wider text-[9px] block">Trainer Cue:</span>
-                <p>{step.cue}</p>
-              </div>
+          
+          {/* Step 1 Card */}
+          <div
+            onClick={() => setActiveTab('STEP_1')}
+            className={`p-4 rounded-3xl bg-white border transition cursor-pointer shadow-sm flex flex-col justify-between space-y-3 hover:border-slate-400 ${
+              activeTab === 'STEP_1' ? 'ring-2 ring-slate-900 border-slate-900' : 'border-slate-200/90'
+            }`}
+          >
+            <div className="w-full aspect-[16/10] bg-slate-50/60 rounded-2xl p-2 flex items-center justify-center overflow-hidden">
+              <img
+                src="/exercises/pushup-step1-top.jpg"
+                alt="Step 1"
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
-          ))}
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="w-5 h-5 rounded-full bg-slate-900 text-white font-number font-bold text-[10px] flex items-center justify-center shrink-0">
+                  1
+                </span>
+                <h4 className="text-xs font-bold text-slate-900">High Plank Setup</h4>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                Hands under shoulders, body in a rigid straight line from head to heels.
+              </p>
+            </div>
+          </div>
+
+          {/* Step 2 Card */}
+          <div
+            onClick={() => setActiveTab('STEP_2')}
+            className={`p-4 rounded-3xl bg-white border transition cursor-pointer shadow-sm flex flex-col justify-between space-y-3 hover:border-slate-400 ${
+              activeTab === 'STEP_2' ? 'ring-2 ring-slate-900 border-slate-900' : 'border-slate-200/90'
+            }`}
+          >
+            <div className="w-full aspect-[16/10] bg-slate-50/60 rounded-2xl p-2 flex items-center justify-center overflow-hidden">
+              <img
+                src="/exercises/pushup-step2-bottom.jpg"
+                alt="Step 2"
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="w-5 h-5 rounded-full bg-slate-900 text-white font-number font-bold text-[10px] flex items-center justify-center shrink-0">
+                  2
+                </span>
+                <h4 className="text-xs font-bold text-slate-900">Lower Chest to Floor</h4>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                Elbows at 45°, lower down until chest hovers just above the ground.
+              </p>
+            </div>
+          </div>
+
+          {/* Step 3 Card */}
+          <div
+            onClick={() => setActiveTab('STEP_3')}
+            className={`p-4 rounded-3xl bg-white border transition cursor-pointer shadow-sm flex flex-col justify-between space-y-3 hover:border-slate-400 ${
+              activeTab === 'STEP_3' ? 'ring-2 ring-slate-900 border-slate-900' : 'border-slate-200/90'
+            }`}
+          >
+            <div className="w-full aspect-[16/10] bg-slate-50/60 rounded-2xl p-2 flex items-center justify-center overflow-hidden">
+              <img
+                src="/exercises/pushup-step1-top.jpg"
+                alt="Step 3"
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="w-5 h-5 rounded-full bg-slate-900 text-white font-number font-bold text-[10px] flex items-center justify-center shrink-0">
+                  3
+                </span>
+                <h4 className="text-xs font-bold text-slate-900">Press Back to Lockout</h4>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                Drive through palms to return to the top position.
+              </p>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {/* =========================================================
-          ANATOMY & MUSCLES TARGETED
-      ========================================================== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        {/* Primary & Secondary Muscles */}
-        <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-              <IconDumbbell className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-slate-900">Muscles Targeted & Anatomy</h4>
-              <p className="text-[11px] text-slate-500">Biomechanical muscle recruitment profile</p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Primary Drivers</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedExercise.targetMusclesPrimary.map((m) => (
-                  <span
-                    key={m}
-                    className="px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold shadow-xs"
-                  >
-                    {m}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Secondary Stabilizers</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedExercise.targetMusclesSecondary.map((m) => (
-                  <span
-                    key={m}
-                    className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200"
-                  >
-                    {m}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Benefits & Functional Transfer */}
-        <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <IconCheckCircle className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-slate-900">Key Exercise Benefits</h4>
-              <p className="text-[11px] text-slate-500">Why this foundational movement is essential</p>
-            </div>
-          </div>
-
-          <ul className="space-y-2.5 text-xs text-slate-700">
-            {selectedExercise.benefits.map((b, idx) => (
-              <li key={idx} className="flex items-start space-x-2">
-                <span className="text-emerald-600 font-bold mt-0.5">✓</span>
-                <span className="font-medium">{b}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-      </div>
-
-      {/* =========================================================
-          FORM TIPS & COMMON MISTAKES (DO'S AND DON'TS)
-      ========================================================== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        {/* DO: Proper Form Checklist */}
-        <div className="p-6 rounded-3xl bg-emerald-50/50 border border-emerald-200/80 shadow-sm space-y-3">
-          <div className="flex items-center space-x-2">
-            <IconCheckCircle className="w-4 h-4 text-emerald-600" />
-            <h4 className="text-sm font-bold text-emerald-950 uppercase tracking-wide">Form Do's (Proper Mechanics)</h4>
-          </div>
-          <ul className="space-y-2 text-xs text-emerald-900 font-medium">
-            {selectedExercise.formTips.map((tip, idx) => (
-              <li key={idx} className="flex items-start space-x-2">
-                <span className="text-emerald-600 font-bold shrink-0">•</span>
-                <span>{tip}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* DON'T: Common Mistakes to Avoid */}
-        <div className="p-6 rounded-3xl bg-rose-50/50 border border-rose-200/80 shadow-sm space-y-3">
-          <div className="flex items-center space-x-2">
-            <IconAlertCircle className="w-4 h-4 text-rose-600" />
-            <h4 className="text-sm font-bold text-rose-950 uppercase tracking-wide">Common Mistakes (What to Avoid)</h4>
-          </div>
-          <ul className="space-y-2 text-xs text-rose-900 font-medium">
-            {selectedExercise.commonMistakes.map((mistake, idx) => (
-              <li key={idx} className="flex items-start space-x-2">
-                <span className="text-rose-600 font-bold shrink-0">✕</span>
-                <span>{mistake}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-      </div>
-
-      {/* =========================================================
-          PROGRESSIVE VARIATIONS & COURSE ROADMAP
-      ========================================================== */}
-      <div className="rounded-3xl bg-white border border-slate-200/90 shadow-sm p-6 space-y-4">
+      {/* Minimal Action Bar */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-slate-900 text-white shadow-sm flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-slate-900">Difficulty Progression & Roadmap</h3>
-          <p className="text-xs text-slate-500">From baseline progressions to advanced variations</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {selectedExercise.variations.map((v) => {
-            const isCurrent = v.name === selectedExercise.name || v.name.includes('Standard Floor');
-            return (
-              <div
-                key={v.name}
-                className={`p-4 rounded-2xl border text-xs space-y-1 transition ${
-                  isCurrent
-                    ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
-                    : 'border-slate-200 bg-slate-50 text-slate-700'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm">{v.name}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                    isCurrent ? 'bg-amber-400 text-slate-950' : 'bg-slate-200 text-slate-700'
-                  }`}>
-                    {v.level}
-                  </span>
-                </div>
-                <p className={`text-[11px] ${isCurrent ? 'text-slate-300' : 'text-slate-500'}`}>
-                  {v.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* =========================================================
-          INTERACTIVE PRACTICE SESSION LAUNCHER
-      ========================================================== */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
-            Guided Workout Practice
-          </span>
-          <h3 className="text-xl font-bold tracking-tight text-white">
-            Ready to test your {selectedExercise.name} technique?
-          </h3>
-          <p className="text-xs text-slate-300">
-            Log your sets, lock in your tempo, and build upper-body strength.
-          </p>
+          <h4 className="text-sm font-bold text-white">Push-Up Routine</h4>
+          <p className="text-xs text-slate-400">3 Sets • 10 Repetitions</p>
         </div>
 
         {!practiceActive ? (
           <button
             onClick={() => setPracticeActive(true)}
-            className="px-6 py-3.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs transition cursor-pointer shadow-md shrink-0 flex items-center space-x-2"
+            className="px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs transition cursor-pointer shadow-md"
           >
-            <IconPlay className="w-4 h-4 fill-slate-950" />
-            <span>Start Practice Session</span>
+            Log Practice
           </button>
         ) : (
-          <div className="flex items-center space-x-3 bg-white/10 p-3 rounded-2xl border border-white/20 backdrop-blur-md">
-            <div>
-              <p className="text-[10px] uppercase font-bold text-slate-300">Active Set</p>
-              <p className="text-lg font-extrabold text-amber-400">{practiceSets} / 3 Sets</p>
-            </div>
+          <div className="flex items-center space-x-3">
+            <span className="text-xs font-bold text-amber-400">Set {practiceSets} / 3</span>
             <button
               onClick={handleFinishPracticeSet}
-              className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs transition cursor-pointer shadow-sm"
+              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs transition cursor-pointer shadow-sm"
             >
-              Complete Set {practiceSets} (+10 Reps)
+              Complete Set {practiceSets}
             </button>
           </div>
         )}

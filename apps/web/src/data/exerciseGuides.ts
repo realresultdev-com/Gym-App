@@ -29,25 +29,25 @@ export const FOUNDATIONAL_EXERCISES: ExerciseGuide[] = [
         stepNumber: 1,
         title: 'Starting High Plank Position',
         instruction:
-          'Place your hands flat on the floor, slightly wider than shoulder-width apart, fingers pointing forward or slightly outward. Extend your legs straight behind you, balancing on your toes with feet hip-width apart.',
-        cue: 'Form a rigid straight line from crown of head to heels. Squeeze your glutes and brace your abs.',
-        imageUrl: '/exercises/pushup-step1.png',
+          'Place hands flat on the floor directly beneath shoulders. Form a straight line from head to heels.',
+        cue: 'Keep core braced and spine neutral.',
+        imageUrl: '/exercises/pushup-step1-top.jpg',
       },
       {
         stepNumber: 2,
-        title: 'The Controlled Descent (Eccentric Phase)',
+        title: 'Lower Chest to Floor',
         instruction:
-          'Inhale as you slowly bend your elbows and lower your chest toward the floor. Maintain a rigid torso without letting your lower back sag or your hips pike up. Lower down until your chest is 1 to 2 inches above the ground.',
-        cue: 'Keep your elbows tucked back at a 45-degree angle from your torso (arrow shape, not a T-shape).',
-        imageUrl: '/exercises/pushup-steps-guide.png',
+          'Bend elbows at a 45-degree angle and lower down until chest hovers just above the floor.',
+        cue: 'Maintain rigid straight body alignment.',
+        imageUrl: '/exercises/pushup-step2-bottom.jpg',
       },
       {
         stepNumber: 3,
-        title: 'Explosive Press & Lockout (Concentric Phase)',
+        title: 'Press Back to Top',
         instruction:
-          'Pause for a brief split-second at the bottom. Exhale forcefully through your mouth as you press through the palms of your hands, contracting your chest and triceps to drive your body back up to the starting plank.',
-        cue: 'Spread your shoulder blades at the top (scapular protraction) to fully engage the serratus anterior.',
-        imageUrl: '/exercises/pushup-step1.png',
+          'Drive through palms and extend arms to return to the starting plank position.',
+        cue: 'Exhale forcefully as you press up.',
+        imageUrl: '/exercises/pushup-step1-top.jpg',
       },
     ],
     formTips: [
