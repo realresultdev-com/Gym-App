@@ -91,9 +91,9 @@ export interface ExerciseGuide {
   name: string;
   series: string;
   lessonNumber: number;
-  category: 'Upper Body' | 'Lower Body' | 'Core' | 'Full Body';
+  category: 'Push' | 'Pull' | 'Legs & Core' | 'Upper Body' | 'Lower Body' | 'Core' | 'Full Body';
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  equipment: 'Bodyweight' | 'Dumbbells' | 'Barbell' | 'Cable';
+  equipment: string;
   targetMusclesPrimary: string[];
   targetMusclesSecondary: string[];
   overview: string;
