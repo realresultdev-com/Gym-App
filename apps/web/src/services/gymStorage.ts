@@ -30,7 +30,9 @@ export interface GymAppState {
   notifications: NotificationItem[];
 }
 
-const STORAGE_KEY = 'FITPULSE_GYM_STATE_V3';
+const STORAGE_KEY = 'FITPULSE_GYM_STATE_V4';
+
+const stripEmojis = (str: string) => str.replace(/[\u{1F300}-\u{1FAFF}]|[\u{2600}-\u{27BF}]/gu, '').trim();
 
 export const INITIAL_PROGRAMS: WorkoutProgram[] = [
   {
@@ -209,7 +211,10 @@ export function loadGymState(): GymAppState {
         completedSessions: parsed.completedSessions || [],
         attendanceHistory: parsed.attendanceHistory || INITIAL_ATTENDANCE,
         members: parsed.members || INITIAL_MEMBERS,
-        notifications: parsed.notifications || INITIAL_NOTIFICATIONS,
+        notifications: (parsed.notifications || INITIAL_NOTIFICATIONS).map((n: NotificationItem) => ({
+          ...n,
+          title: stripEmojis(n.title),
+        })),
       };
     }
   } catch (e) {

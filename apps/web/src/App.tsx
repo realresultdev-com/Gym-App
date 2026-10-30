@@ -1366,23 +1366,20 @@ export default function App() {
                 gymState.notifications.map((n) => (
                   <div
                     key={n.id}
-                    className={`pt-3 first:pt-0 pb-1 flex items-start justify-between group`}
+                    className="pt-3 first:pt-0 pb-1 flex items-start justify-between group"
                   >
-                    <div className="flex items-start space-x-3">
-                      {!n.read && (
-                        <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1.5"></span>
-                      )}
-                      <div>
-                        <h4 className="text-xs font-semibold text-slate-900">{n.title}</h4>
-                        <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{n.message}</p>
-                        <p className="text-[10px] text-slate-400 mt-1 font-medium">
-                          {n.author} • {n.createdAt}
-                        </p>
-                      </div>
+                    <div>
+                      <h4 className="text-xs font-semibold text-slate-900">
+                        {n.title.replace(/[\u{1F300}-\u{1FAFF}]|[\u{2600}-\u{27BF}]/gu, '').trim()}
+                      </h4>
+                      <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{n.message}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 font-medium">
+                        {n.author} • {n.createdAt}
+                      </p>
                     </div>
                     <button
                       onClick={() => handleDeleteNotification(n.id)}
-                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 text-xs p-1 transition"
+                      className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-slate-700 text-xs p-1 transition cursor-pointer"
                       title="Dismiss"
                     >
                       <IconClose className="w-3 h-3" />
