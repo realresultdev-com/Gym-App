@@ -19,7 +19,7 @@ export function Header({ onPressProfile, onPressNotification, onPressRoleSwitch 
   });
 
   return (
-    <View className="flex-row items-center justify-between px-5 pt-3 pb-2 bg-gym-bg">
+    <View className="flex-row items-center justify-between px-5 pt-3 pb-2 bg-white">
       <View className="flex-row items-center space-x-3 gap-3">
         {/* Profile Avatar */}
         <TouchableOpacity onPress={onPressProfile} activeOpacity={0.8}>
@@ -29,16 +29,16 @@ export function Header({ onPressProfile, onPressNotification, onPressRoleSwitch 
                 user?.avatar_url ||
                 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
             }}
-            className="w-11 h-11 rounded-full border border-neutral-700 bg-neutral-800"
+            className="w-11 h-11 rounded-full border border-slate-200 bg-slate-100"
           />
         </TouchableOpacity>
 
         {/* User Greeting */}
         <View>
-          <Text className="text-white text-base font-bold">
+          <Text className="text-slate-900 text-base font-black">
             Hello, {user?.first_name || 'Martin'}
           </Text>
-          <Text className="text-neutral-400 text-xs font-medium">
+          <Text className="text-slate-500 text-xs font-semibold">
             Today {formattedDate}
           </Text>
         </View>
@@ -49,21 +49,21 @@ export function Header({ onPressProfile, onPressNotification, onPressRoleSwitch 
         <TouchableOpacity
           onPress={onPressRoleSwitch}
           activeOpacity={0.7}
-          className={`px-2.5 py-1 rounded-full border ${
+          className={`px-3 py-1 rounded-full border ${
             role === 'ADMIN'
-              ? 'bg-purple-950/60 border-purple-600'
+              ? 'bg-purple-50 border-purple-200'
               : role === 'TRAINER'
-              ? 'bg-blue-950/60 border-blue-600'
-              : 'bg-lime-950/60 border-gym-lime'
+              ? 'bg-blue-50 border-blue-200'
+              : 'bg-lime-50 border-lime-300'
           }`}
         >
           <Text
-            className={`text-xs font-bold ${
+            className={`text-xs font-black ${
               role === 'ADMIN'
-                ? 'text-purple-400'
+                ? 'text-purple-700'
                 : role === 'TRAINER'
-                ? 'text-blue-400'
-                : 'text-gym-lime'
+                ? 'text-blue-700'
+                : 'text-lime-700'
             }`}
           >
             {role || 'MEMBER'}
@@ -74,13 +74,12 @@ export function Header({ onPressProfile, onPressNotification, onPressRoleSwitch 
         <TouchableOpacity
           onPress={onPressNotification}
           activeOpacity={0.7}
-          className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 items-center justify-center relative"
+          className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 items-center justify-center relative"
         >
-          <Text className="text-white text-base">🔔</Text>
-          <View className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-gym-lime" />
+          <Text className="text-slate-700 text-base">🔔</Text>
+          <View className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-lime-500 ring-2 ring-white" />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-

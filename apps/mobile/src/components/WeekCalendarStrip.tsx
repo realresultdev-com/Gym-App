@@ -12,14 +12,29 @@ const DAYS = [
 ];
 
 export function WeekCalendarStrip() {
-  const [selectedDate, setSelectedDate] = useState(25); // Thu 25 selected as in Image 1
+  const [selectedDate, setSelectedDate] = useState(25); // Thu 25 selected
 
   return (
     <View className="px-5 my-2">
+      {/* 12 Days Streak Card (from Image 1 Right) */}
+      <View className="flex-row items-center justify-between p-3.5 mb-2.5 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm">
+        <View className="flex-row items-center space-x-2.5 gap-2.5">
+          <View className="w-8 h-8 rounded-full bg-emerald-100 items-center justify-center border border-emerald-300">
+            <Text className="text-emerald-700 font-bold text-xs">⚡</Text>
+          </View>
+          <View>
+            <Text className="text-slate-900 text-sm font-black">12 Days Active Streak</Text>
+            <Text className="text-slate-500 text-[11px] font-semibold">Keep it up! 3 days to gold badge</Text>
+          </View>
+        </View>
+        <Text className="text-slate-400 font-bold text-sm">›</Text>
+      </View>
+
+      {/* Week Day Pills */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ flexDirection: 'row', gap: 8 }}
+        contentContainerStyle={{ flexDirection: 'row', gap: 8, paddingVertical: 2 }}
       >
         {DAYS.map((item) => {
           const isSelected = item.date === selectedDate;
@@ -30,30 +45,31 @@ export function WeekCalendarStrip() {
               onPress={() => setSelectedDate(item.date)}
               className={`w-12 py-3 rounded-2xl items-center justify-center ${
                 isSelected
-                  ? 'bg-gym-lime shadow-md shadow-lime-400/20'
-                  : 'bg-gym-card border border-neutral-800'
+                  ? 'bg-slate-900 shadow-md shadow-slate-900/20'
+                  : 'bg-white border border-slate-200 shadow-sm'
               }`}
-              style={isSelected ? { backgroundColor: '#bbf451' } : undefined}
             >
               <Text
-                className={`text-xs font-semibold ${
-                  isSelected ? 'text-black' : 'text-neutral-400'
+                className={`text-[11px] font-bold ${
+                  isSelected ? 'text-slate-300' : 'text-slate-400'
                 }`}
               >
                 {item.day}
               </Text>
               <Text
                 className={`text-sm font-black mt-1 ${
-                  isSelected ? 'text-black' : 'text-white'
+                  isSelected ? 'text-white' : 'text-slate-800'
                 }`}
               >
                 {item.date}
               </Text>
 
               {/* Dot indicator */}
-              {isSelected && (
-                <View className="w-1.5 h-1.5 rounded-full bg-black mt-1" />
-              )}
+              <View
+                className={`w-1.5 h-1.5 rounded-full mt-1 ${
+                  isSelected ? 'bg-amber-400' : 'bg-transparent'
+                }`}
+              />
             </TouchableOpacity>
           );
         })}
@@ -61,4 +77,3 @@ export function WeekCalendarStrip() {
     </View>
   );
 }
-

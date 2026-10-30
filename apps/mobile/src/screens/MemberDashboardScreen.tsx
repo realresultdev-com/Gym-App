@@ -20,7 +20,7 @@ export function MemberDashboardScreen({
   const [selectedCategory, setSelectedCategory] = useState('All Type');
 
   return (
-    <ScrollView className="flex-1 bg-gym-bg" showsVerticalScrollIndicator={false}>
+    <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
       {/* Top Header */}
       <Header
         onPressRoleSwitch={onOpenRoleSwitch}
@@ -28,28 +28,28 @@ export function MemberDashboardScreen({
         onPressProfile={() => Alert.alert('Profile', 'Member Martin Vance • FITPULSE All-Access VIP')}
       />
 
-      {/* Hero Daily Challenge Card (Image 1 Left) */}
+      {/* Hero Daily Challenge Card (Image 1 Right Style) */}
       <DailyChallengeCard onPress={onOpenWorkout} />
 
-      {/* Week Calendar Strip (Image 1 Left) */}
+      {/* Week Calendar Strip with 12 Days Streak Card */}
       <WeekCalendarStrip />
 
-      {/* Daily Program Header (Image 1 Left) */}
+      {/* Daily Program Header */}
       <View className="flex-row items-center justify-between px-5 pt-3 pb-1">
-        <Text className="text-white text-base font-bold">Daily Program</Text>
+        <Text className="text-slate-900 text-lg font-black tracking-tight">Daily Program</Text>
         <TouchableOpacity activeOpacity={0.7}>
-          <Text className="text-neutral-400 text-xs font-semibold">See All</Text>
+          <Text className="text-slate-500 text-xs font-bold">See All</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Program Type Filter Pills (Image 1 Left) */}
+      {/* Program Type Filter Pills */}
       <CategoryPills
         categories={['All Type', 'Chest', 'Arms', 'Cardio', 'Yoga']}
-        activeColor="lime"
+        activeColor="dark"
         onSelect={(cat) => setSelectedCategory(cat)}
       />
 
-      {/* Horizontal Program Cards (Image 1 Left) */}
+      {/* Horizontal Program Cards */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -83,16 +83,15 @@ export function MemberDashboardScreen({
         />
       </ScrollView>
 
-      {/* FITPULSE Check-In Interface (Image 2 Left) */}
+      {/* FITPULSE Check-In Interface */}
       <View className="pt-2">
         <FitpulseCheckInCard onOpenQRScanner={() => Alert.alert('Check-In', 'Scanned QR successfully! Check-in recorded on Cloudflare D1.')} />
       </View>
 
-      {/* Peak Hours Timeline (Image 2 Left) */}
+      {/* Peak Hours Timeline */}
       <PeakHoursTimeline />
 
       <View className="h-10" />
     </ScrollView>
   );
 }
-

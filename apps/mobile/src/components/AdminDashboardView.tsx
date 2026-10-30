@@ -29,98 +29,99 @@ export function AdminDashboardView() {
 
   return (
     <ScrollView
-      className="flex-1 bg-gym-bg px-5 pt-3 pb-8"
+      className="flex-1 bg-white px-5 pt-3 pb-8"
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={loadData} />}
+      showsVerticalScrollIndicator={false}
     >
       <View className="mb-4">
-        <Text className="text-white text-2xl font-black">Admin Command Center</Text>
-        <Text className="text-neutral-400 text-xs">Cloudflare Serverless Management</Text>
+        <Text className="text-slate-900 text-2xl font-black">Admin Command Center</Text>
+        <Text className="text-slate-500 text-xs font-semibold">Cloudflare Serverless Management</Text>
       </View>
 
       {/* Metric Cards Grid */}
       <View className="flex-row flex-wrap justify-between mb-4">
-        <View className="w-[48%] bg-gym-card p-4 rounded-3xl border border-neutral-800 mb-3">
-          <Text className="text-neutral-400 text-xs font-semibold">Active Members</Text>
-          <Text className="text-white text-2xl font-black mt-1">{metrics.total_members}</Text>
-          <Text className="text-gym-lime text-[11px] font-bold mt-1">↑ 14% this month</Text>
+        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm mb-3">
+          <Text className="text-slate-500 text-xs font-bold">Active Members</Text>
+          <Text className="text-slate-900 text-2xl font-black mt-1">{metrics.total_members}</Text>
+          <Text className="text-emerald-600 text-[11px] font-bold mt-1">↑ 14% this month</Text>
         </View>
 
-        <View className="w-[48%] bg-gym-card p-4 rounded-3xl border border-neutral-800 mb-3">
-          <Text className="text-neutral-400 text-xs font-semibold">Active Subscriptions</Text>
-          <Text className="text-white text-2xl font-black mt-1">{metrics.active_subscriptions}</Text>
-          <Text className="text-gym-lime text-[11px] font-bold mt-1">98% Retention</Text>
+        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm mb-3">
+          <Text className="text-slate-500 text-xs font-bold">Active Subscriptions</Text>
+          <Text className="text-slate-900 text-2xl font-black mt-1">{metrics.active_subscriptions}</Text>
+          <Text className="text-emerald-600 text-[11px] font-bold mt-1">98% Retention</Text>
         </View>
 
-        <View className="w-[48%] bg-gym-card p-4 rounded-3xl border border-neutral-800">
-          <Text className="text-neutral-400 text-xs font-semibold">Today Check-Ins</Text>
-          <Text className="text-white text-2xl font-black mt-1">{metrics.today_checkins}</Text>
-          <Text className="text-neutral-400 text-[11px] font-medium mt-1">Peak: 18:00 - 20:00</Text>
+        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <Text className="text-slate-500 text-xs font-bold">Today Check-Ins</Text>
+          <Text className="text-slate-900 text-2xl font-black mt-1">{metrics.today_checkins}</Text>
+          <Text className="text-slate-500 text-[11px] font-semibold mt-1">Peak: 18:00 - 20:00</Text>
         </View>
 
-        <View className="w-[48%] bg-gym-card p-4 rounded-3xl border border-neutral-800">
-          <Text className="text-neutral-400 text-xs font-semibold">Monthly Revenue</Text>
-          <Text className="text-gym-lime text-2xl font-black mt-1">${metrics.monthly_revenue}</Text>
-          <Text className="text-neutral-400 text-[11px] font-medium mt-1">All-Access & Pro</Text>
+        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <Text className="text-slate-500 text-xs font-bold">Monthly Revenue</Text>
+          <Text className="text-slate-900 text-2xl font-black mt-1">${metrics.monthly_revenue}</Text>
+          <Text className="text-slate-500 text-[11px] font-semibold mt-1">All-Access & Pro</Text>
         </View>
       </View>
 
       {/* Cloudflare Free Tier Optimization Card */}
-      <View className="bg-neutral-900 rounded-3xl p-5 border border-purple-900/50 mb-5">
+      <View className="bg-slate-50 rounded-3xl p-5 border border-slate-200 shadow-sm mb-5">
         <View className="flex-row items-center justify-between mb-2">
           <View className="flex-row items-center space-x-2 gap-2">
             <Text className="text-base">⚡</Text>
-            <Text className="text-white text-sm font-bold">Cloudflare Free-Tier Health</Text>
+            <Text className="text-slate-900 text-sm font-black">Cloudflare Free-Tier Health</Text>
           </View>
-          <View className="bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500">
-            <Text className="text-emerald-300 text-[10px] font-bold">100% Free Tier</Text>
+          <View className="bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+            <Text className="text-emerald-800 text-[10px] font-bold">100% Free Tier</Text>
           </View>
         </View>
 
-        <Text className="text-neutral-400 text-xs mb-3">
-          All API logic executes on Cloudflare Workers edge nodes. Relational data is indexed in D1 with KV caching.
+        <Text className="text-slate-600 text-xs mb-3 font-medium">
+          Edge compute executes on Cloudflare Workers. Relational data is indexed in D1 SQLite with KV caching.
         </Text>
 
-        <View className="space-y-2 gap-2">
+        <View className="space-y-2.5 gap-2.5">
           <View>
             <View className="flex-row justify-between text-xs mb-1">
-              <Text className="text-neutral-400 text-xs">Workers Daily Requests</Text>
-              <Text className="text-neutral-300 text-xs font-mono">&lt; 1% of 100,000</Text>
+              <Text className="text-slate-500 text-xs font-semibold">Workers Daily Requests</Text>
+              <Text className="text-slate-800 text-xs font-mono font-bold">&lt; 1% of 100,000</Text>
             </View>
-            <View className="h-1.5 w-full bg-neutral-800 rounded-full overflow-hidden">
-              <View className="h-full bg-gym-lime rounded-full w-[2%]" />
+            <View className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+              <View className="h-full bg-slate-900 rounded-full w-[2%]" />
             </View>
           </View>
 
           <View>
             <View className="flex-row justify-between text-xs mb-1">
-              <Text className="text-neutral-400 text-xs">D1 SQLite Storage</Text>
-              <Text className="text-neutral-300 text-xs font-mono">&lt; 1MB of 500MB</Text>
+              <Text className="text-slate-500 text-xs font-semibold">D1 SQLite Storage</Text>
+              <Text className="text-slate-800 text-xs font-mono font-bold">&lt; 1MB of 500MB</Text>
             </View>
-            <View className="h-1.5 w-full bg-neutral-800 rounded-full overflow-hidden">
-              <View className="h-full bg-purple-500 rounded-full w-[1%]" />
+            <View className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+              <View className="h-full bg-indigo-600 rounded-full w-[1%]" />
             </View>
           </View>
         </View>
       </View>
 
       {/* Quick Admin Actions */}
-      <Text className="text-white text-sm font-bold mb-3">Quick Management</Text>
-      <View className="bg-gym-card rounded-3xl p-3 border border-neutral-800 space-y-2 gap-2 mb-10">
+      <Text className="text-slate-900 text-sm font-black mb-3">Quick Management</Text>
+      <View className="bg-white rounded-3xl p-3 border border-slate-200 space-y-2 gap-2 mb-10 shadow-sm">
         <TouchableOpacity
           onPress={async () => {
             const res = await ApiClient.get('/api/attendance/qr/generate');
             if (res.success) alert('Dynamic QR generated for reception display!');
           }}
-          className="flex-row items-center justify-between p-3 rounded-2xl bg-neutral-900 border border-neutral-800"
+          className="flex-row items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200"
         >
           <View className="flex-row items-center space-x-3 gap-3">
             <Text className="text-lg">🎟</Text>
             <View>
-              <Text className="text-white text-xs font-bold">Generate Reception QR Code</Text>
-              <Text className="text-neutral-400 text-[10px]">120s rotating front-desk dynamic token</Text>
+              <Text className="text-slate-900 text-xs font-black">Generate Reception QR Code</Text>
+              <Text className="text-slate-500 text-[10px] font-semibold">120s rotating front-desk dynamic token</Text>
             </View>
           </View>
-          <Text className="text-neutral-400 text-xs">→</Text>
+          <Text className="text-slate-400 text-xs font-bold">→</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -131,19 +132,18 @@ export function AdminDashboardView() {
             });
             if (res.success) alert('Broadcast sent to all active members!');
           }}
-          className="flex-row items-center justify-between p-3 rounded-2xl bg-neutral-900 border border-neutral-800"
+          className="flex-row items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200"
         >
           <View className="flex-row items-center space-x-3 gap-3">
             <Text className="text-lg">📢</Text>
             <View>
-              <Text className="text-white text-xs font-bold">Send Gym Broadcast</Text>
-              <Text className="text-neutral-400 text-[10px]">Instant notification to all active members</Text>
+              <Text className="text-slate-900 text-xs font-black">Send Gym Broadcast</Text>
+              <Text className="text-slate-500 text-[10px] font-semibold">Instant notification to all active members</Text>
             </View>
           </View>
-          <Text className="text-neutral-400 text-xs">→</Text>
+          <Text className="text-slate-400 text-xs font-bold">→</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
-

@@ -30,17 +30,17 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <View className="flex-1 bg-black/80 justify-end">
-        <View className="bg-gym-card rounded-t-3xl p-6 border-t border-neutral-800">
+      <View className="flex-1 bg-black/40 justify-end">
+        <View className="bg-white rounded-t-3xl p-6 border-t border-slate-200 shadow-2xl">
           <View className="flex-row items-center justify-between mb-4">
             <View>
-              <Text className="text-white text-lg font-black">Switch Role / User</Text>
-              <Text className="text-neutral-400 text-xs">
-                Active role: <Text className="text-gym-lime font-bold">{role || 'MEMBER'}</Text>
+              <Text className="text-slate-900 text-lg font-black">Switch Role / User</Text>
+              <Text className="text-slate-500 text-xs font-semibold">
+                Active role: <Text className="text-slate-900 font-bold">{role || 'MEMBER'}</Text>
               </Text>
             </View>
             <TouchableOpacity onPress={onClose} className="p-2">
-              <Text className="text-neutral-400 font-bold text-base">✕</Text>
+              <Text className="text-slate-400 font-bold text-base">✕</Text>
             </TouchableOpacity>
           </View>
 
@@ -52,18 +52,20 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
                 disabled={isLoading}
                 className={`p-4 rounded-2xl border flex-row items-center space-x-3 gap-3 ${
                   role === 'MEMBER'
-                    ? 'bg-gym-lime/10 border-gym-lime'
-                    : 'bg-neutral-900 border-neutral-800'
+                    ? 'bg-slate-900 border-slate-900 shadow-sm'
+                    : 'bg-slate-50 border-slate-200'
                 }`}
               >
                 <Text className="text-2xl">🏋️</Text>
                 <View className="flex-1">
-                  <Text className="text-white text-sm font-bold">Martin Vance (Member)</Text>
-                  <Text className="text-neutral-400 text-xs">
-                    Dark Dashboard, Daily Challenges, Exercise Tracking, Check-In
+                  <Text className={`text-sm font-black ${role === 'MEMBER' ? 'text-white' : 'text-slate-900'}`}>
+                    Martin Vance (Member)
+                  </Text>
+                  <Text className={`text-xs ${role === 'MEMBER' ? 'text-slate-300' : 'text-slate-500'}`}>
+                    White Dashboard, Challenge, Exercise Tracking, Check-In
                   </Text>
                 </View>
-                {role === 'MEMBER' && <Text className="text-gym-lime font-bold">✓</Text>}
+                {role === 'MEMBER' && <Text className="text-amber-400 font-black text-sm">✓</Text>}
               </TouchableOpacity>
 
               {/* Trainer Card */}
@@ -72,18 +74,20 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
                 disabled={isLoading}
                 className={`p-4 rounded-2xl border flex-row items-center space-x-3 gap-3 ${
                   role === 'TRAINER'
-                    ? 'bg-blue-950/40 border-blue-500'
-                    : 'bg-neutral-900 border-neutral-800'
+                    ? 'bg-slate-900 border-slate-900 shadow-sm'
+                    : 'bg-slate-50 border-slate-200'
                 }`}
               >
                 <Text className="text-2xl">💪</Text>
                 <View className="flex-1">
-                  <Text className="text-white text-sm font-bold">Alex Hunter (Trainer)</Text>
-                  <Text className="text-neutral-400 text-xs">
+                  <Text className={`text-sm font-black ${role === 'TRAINER' ? 'text-white' : 'text-slate-900'}`}>
+                    Alex Hunter (Trainer)
+                  </Text>
+                  <Text className={`text-xs ${role === 'TRAINER' ? 'text-slate-300' : 'text-slate-500'}`}>
                     Assigned clients, workout plan assignment, athlete attendance
                   </Text>
                 </View>
-                {role === 'TRAINER' && <Text className="text-blue-400 font-bold">✓</Text>}
+                {role === 'TRAINER' && <Text className="text-amber-400 font-black text-sm">✓</Text>}
               </TouchableOpacity>
 
               {/* Admin Card */}
@@ -92,25 +96,27 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
                 disabled={isLoading}
                 className={`p-4 rounded-2xl border flex-row items-center space-x-3 gap-3 ${
                   role === 'ADMIN'
-                    ? 'bg-purple-950/40 border-purple-500'
-                    : 'bg-neutral-900 border-neutral-800'
+                    ? 'bg-slate-900 border-slate-900 shadow-sm'
+                    : 'bg-slate-50 border-slate-200'
                 }`}
               >
                 <Text className="text-2xl">👑</Text>
                 <View className="flex-1">
-                  <Text className="text-white text-sm font-bold">Sarah Connor (Admin)</Text>
-                  <Text className="text-neutral-400 text-xs">
-                    Revenue, Cloudflare Free-Tier monitor, members & broadcasts
+                  <Text className={`text-sm font-black ${role === 'ADMIN' ? 'text-white' : 'text-slate-900'}`}>
+                    Sarah Connor (Admin)
+                  </Text>
+                  <Text className={`text-xs ${role === 'ADMIN' ? 'text-slate-300' : 'text-slate-500'}`}>
+                    Revenue, Cloudflare Free-Tier monitor, members & reception QR
                   </Text>
                 </View>
-                {role === 'ADMIN' && <Text className="text-purple-400 font-bold">✓</Text>}
+                {role === 'ADMIN' && <Text className="text-amber-400 font-black text-sm">✓</Text>}
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => setShowManualLogin(true)}
-                className="py-3 items-center justify-center rounded-2xl border border-neutral-800"
+                className="py-3 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100"
               >
-                <Text className="text-neutral-300 text-xs font-semibold">
+                <Text className="text-slate-700 text-xs font-bold">
                   Sign In with Custom Email & Password
                 </Text>
               </TouchableOpacity>
@@ -121,34 +127,33 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
                 value={email}
                 onChangeText={setEmail}
                 placeholder="Email or phone"
-                placeholderTextColor="#71717a"
-                className="bg-neutral-900 text-white p-3.5 rounded-2xl border border-neutral-800 text-sm"
+                placeholderTextColor="#94a3b8"
+                className="bg-slate-50 text-slate-900 p-3.5 rounded-2xl border border-slate-200 text-sm font-medium"
                 autoCapitalize="none"
               />
               <TextInput
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Password"
-                placeholderTextColor="#71717a"
+                placeholderTextColor="#94a3b8"
                 secureTextEntry
-                className="bg-neutral-900 text-white p-3.5 rounded-2xl border border-neutral-800 text-sm"
+                className="bg-slate-50 text-slate-900 p-3.5 rounded-2xl border border-slate-200 text-sm font-medium"
               />
 
-              {error && <Text className="text-red-400 text-xs">{error}</Text>}
+              {error && <Text className="text-red-500 text-xs font-bold">{error}</Text>}
 
               <TouchableOpacity
                 onPress={handleManualLogin}
-                className="py-3.5 rounded-2xl bg-gym-lime items-center justify-center"
-                style={{ backgroundColor: '#bbf451' }}
+                className="py-3.5 rounded-2xl bg-slate-900 items-center justify-center shadow-md"
               >
-                <Text className="text-black font-black text-sm">Sign In</Text>
+                <Text className="text-white font-black text-sm">Sign In</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => setShowManualLogin(false)}
                 className="py-2 items-center"
               >
-                <Text className="text-neutral-400 text-xs">Back to demo roles</Text>
+                <Text className="text-slate-500 text-xs font-semibold">Back to demo roles</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -157,4 +162,3 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
     </Modal>
   );
 }
-

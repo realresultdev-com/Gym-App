@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 
 interface CategoryPillsProps {
   categories?: string[];
-  activeColor?: string; // 'lime' | 'coral'
+  activeColor?: string; // 'dark' | 'lime' | 'coral'
   onSelect?: (cat: string) => void;
 }
 
@@ -11,7 +11,7 @@ const DEFAULT_CATEGORIES = ['All Type', 'Chest', 'Arms', 'Cardio', 'Yoga'];
 
 export function CategoryPills({
   categories = DEFAULT_CATEGORIES,
-  activeColor = 'lime',
+  activeColor = 'dark',
   onSelect,
 }: CategoryPillsProps) {
   const [active, setActive] = useState(categories[0]);
@@ -20,8 +20,6 @@ export function CategoryPills({
     setActive(cat);
     onSelect?.(cat);
   };
-
-  const isLime = activeColor === 'lime';
 
   return (
     <ScrollView
@@ -36,28 +34,15 @@ export function CategoryPills({
             key={cat}
             activeOpacity={0.8}
             onPress={() => handlePress(cat)}
-            className={`px-4 py-2 rounded-full border ${
+            className={`px-4 py-2 rounded-full border shadow-sm ${
               isSelected
-                ? isLime
-                  ? 'border-transparent'
-                  : 'bg-gym-coral border-transparent'
-                : 'bg-neutral-900/80 border-neutral-800'
+                ? 'bg-slate-900 border-slate-900'
+                : 'bg-white border-slate-200'
             }`}
-            style={
-              isSelected && isLime
-                ? { backgroundColor: '#bbf451' }
-                : isSelected && !isLime
-                ? { backgroundColor: '#ff3b30' }
-                : undefined
-            }
           >
             <Text
-              className={`text-xs font-bold ${
-                isSelected
-                  ? isLime
-                    ? 'text-black'
-                    : 'text-white'
-                  : 'text-neutral-400'
+              className={`text-xs font-black ${
+                isSelected ? 'text-white' : 'text-slate-600'
               }`}
             >
               {cat}
@@ -68,4 +53,3 @@ export function CategoryPills({
     </ScrollView>
   );
 }
-
