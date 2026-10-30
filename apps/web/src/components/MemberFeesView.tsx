@@ -92,7 +92,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
           <h3 className="text-2xl font-extrabold tracking-tight text-white">{profile.planName}</h3>
           <p className="text-xs text-slate-300">
             {profile.daysRemaining > 0 ? (
-              <span>Your membership is active with <strong className="text-white font-bold">{profile.daysRemaining} days remaining</strong> until renewal.</span>
+              <span>Your membership is active with <strong className="text-white font-number font-bold tracking-tight">{profile.daysRemaining} days remaining</strong> until renewal.</span>
             ) : (
               <span className="text-rose-300 font-semibold">Your renewal is due. Please pay your fee to avoid access turnstile restriction.</span>
             )}
@@ -100,10 +100,10 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
         </div>
 
         <div className="flex items-center space-x-3 z-10">
-          <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+          <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-center min-w-[110px]">
             <p className="text-[10px] uppercase font-semibold text-slate-300">Next Fee Due</p>
-            <p className="text-lg font-bold text-white mt-0.5">${profile.nextDueAmount}</p>
-            <p className="text-[10px] text-amber-300">{profile.nextDueDate}</p>
+            <p className="font-ios-stat text-2xl text-white mt-0.5 tracking-tight">${profile.nextDueAmount}</p>
+            <p className="font-number text-[11px] font-semibold text-amber-300">{profile.nextDueDate}</p>
           </div>
           <button
             onClick={() => setPayModalOpen(true)}
@@ -138,21 +138,21 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Amount Paid</p>
-              <p className="text-lg font-bold text-slate-900 mt-0.5">${profile.lastPaymentAmount.toFixed(2)}</p>
+              <p className="font-ios-stat text-2xl text-slate-900 mt-0.5 tracking-tight">${profile.lastPaymentAmount.toFixed(2)}</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Payment Date</p>
-              <p className="text-xs font-bold text-slate-900 mt-1">{profile.lastPaymentDate}</p>
+              <p className="font-number text-xs font-bold text-slate-900 mt-1">{profile.lastPaymentDate}</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Method</p>
               <p className="text-xs font-semibold text-slate-900 mt-1">{profile.lastPaymentMethod}</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Invoice Number</p>
-              <p className="font-mono text-xs font-bold text-slate-900 mt-1">{profile.lastInvoiceNumber}</p>
+              <p className="font-number text-xs font-bold text-slate-900 tracking-tight mt-1">{profile.lastInvoiceNumber}</p>
             </div>
           </div>
 
@@ -191,21 +191,21 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Due Amount</p>
-              <p className="text-lg font-bold text-slate-900 mt-0.5">${profile.nextDueAmount.toFixed(2)}</p>
+              <p className="font-ios-stat text-2xl text-slate-900 mt-0.5 tracking-tight">${profile.nextDueAmount.toFixed(2)}</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Due Date</p>
-              <p className="text-xs font-bold text-slate-900 mt-1">{profile.nextDueDate}</p>
+              <p className="font-number text-xs font-bold text-slate-900 mt-1">{profile.nextDueDate}</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Auto-Renewal</p>
               <p className="text-xs font-semibold text-emerald-600 mt-1">Enabled (Card On File)</p>
             </div>
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
               <p className="text-slate-400 font-medium">Grace Window</p>
-              <p className="text-xs font-semibold text-slate-700 mt-1">3 Days Post Due</p>
+              <p className="font-number text-xs font-semibold text-slate-700 mt-1">3 Days Post Due</p>
             </div>
           </div>
 
@@ -248,10 +248,10 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
             <tbody className="divide-y divide-slate-100">
               {history.map((record) => (
                 <tr key={record.id} className="hover:bg-slate-50/70 transition">
-                  <td className="py-3.5 px-4 font-mono font-semibold text-slate-900">
+                  <td className="py-3.5 px-4 font-number font-bold text-slate-900 tracking-tight">
                     {record.invoiceNumber}
                   </td>
-                  <td className="py-3.5 px-4 text-slate-700 font-medium">
+                  <td className="py-3.5 px-4 font-number text-slate-700 font-medium">
                     {record.paidDate}
                   </td>
                   <td className="py-3.5 px-4 font-semibold text-slate-900">
@@ -262,7 +262,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
                       {record.method}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 font-bold text-slate-900">
+                  <td className="py-3.5 px-4 font-number font-bold text-slate-900 tracking-tight text-sm">
                     ${record.amount.toFixed(2)}
                   </td>
                   <td className="py-3.5 px-4">
@@ -390,7 +390,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
                   </svg>
                 </div>
                 <div className="text-[11px] text-slate-600">
-                  <p>UPI ID: <span className="font-mono font-bold text-slate-900">fitpulse.studio@icici</span></p>
+                  <p>UPI ID: <span className="font-number font-bold text-slate-900">fitpulse.studio@icici</span></p>
                   <p className="text-slate-400 mt-0.5">Supports Google Pay, PhonePe, Paytm, CRED</p>
                 </div>
               </div>
@@ -404,7 +404,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
                     type="text"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
-                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-mono font-medium focus:ring-2 focus:ring-slate-900 focus:outline-none"
+                    className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-number font-medium focus:ring-2 focus:ring-slate-900 focus:outline-none"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -414,7 +414,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
                       type="text"
                       value={cardExpiry}
                       onChange={(e) => setCardExpiry(e.target.value)}
-                      className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-mono font-medium focus:ring-2 focus:ring-slate-900 focus:outline-none"
+                      className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-number font-medium focus:ring-2 focus:ring-slate-900 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -423,7 +423,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
                       type="password"
                       value={cardCvc}
                       onChange={(e) => setCardCvc(e.target.value)}
-                      className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-mono font-medium focus:ring-2 focus:ring-slate-900 focus:outline-none"
+                      className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-xs font-number font-medium focus:ring-2 focus:ring-slate-900 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
               <div>
                 <p className="text-[11px] text-slate-400 font-medium">Total Payable</p>
-                <p className="text-xl font-extrabold text-slate-900">${activePlan.price}.00</p>
+                <p className="font-ios-stat text-2xl text-slate-900">${activePlan.price}.00</p>
               </div>
               <button
                 type="button"

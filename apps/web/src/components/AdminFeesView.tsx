@@ -151,7 +151,7 @@ export function AdminFeesView({
             <p className="text-xs font-medium text-slate-500">Total Collected</p>
             <IconDollar className="w-4 h-4 text-emerald-600" />
           </div>
-          <p className="text-2xl font-bold text-slate-900 mt-1">${totalCollectedThisMonth.toLocaleString()}</p>
+          <p className="font-ios-stat text-2xl text-slate-900 mt-1">${totalCollectedThisMonth.toLocaleString()}</p>
           <p className="text-[11px] text-emerald-600 font-semibold mt-1">Verified studio ledger</p>
         </div>
 
@@ -160,7 +160,7 @@ export function AdminFeesView({
             <p className="text-xs font-medium text-slate-500">Overdue Dues</p>
             <IconAlertCircle className="w-4 h-4 text-rose-600" />
           </div>
-          <p className="text-2xl font-bold text-rose-600 mt-1">${overdueDuesTotal}</p>
+          <p className="font-ios-stat text-2xl text-rose-600 mt-1">${overdueDuesTotal}</p>
           <p className="text-[11px] text-rose-500 font-semibold mt-1">{overdueCount} member{overdueCount !== 1 ? 's' : ''} past due</p>
         </div>
 
@@ -169,7 +169,7 @@ export function AdminFeesView({
             <p className="text-xs font-medium text-slate-500">Renewals Due &lt; 7 Days</p>
             <IconCalendar className="w-4 h-4 text-amber-600" />
           </div>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{dueSoonCount}</p>
+          <p className="font-ios-stat text-2xl text-slate-900 mt-1">{dueSoonCount}</p>
           <p className="text-[11px] text-amber-600 font-semibold mt-1">Upcoming cycle renewals</p>
         </div>
 
@@ -178,7 +178,7 @@ export function AdminFeesView({
             <p className="text-xs font-medium text-slate-500">Active Membership Roster</p>
             <IconCheckCircle className="w-4 h-4 text-slate-600" />
           </div>
-          <p className="text-2xl font-bold text-slate-900 mt-1">{feeProfiles.length}</p>
+          <p className="font-ios-stat text-2xl text-slate-900 mt-1">{feeProfiles.length}</p>
           <p className="text-[11px] text-slate-400 mt-1">Enrolled fitness athletes</p>
         </div>
 
@@ -273,28 +273,28 @@ export function AdminFeesView({
                     {/* Plan */}
                     <td className="py-3.5 px-4">
                       <p className="font-semibold text-slate-900">{p.planName}</p>
-                      <p className="text-[10px] text-slate-500">{p.billingFrequency} Cycle • ${p.feeAmount}</p>
+                      <p className="text-[10px] text-slate-500">{p.billingFrequency} Cycle • <span className="font-number font-semibold">${p.feeAmount}</span></p>
                     </td>
 
                     {/* Last Payment */}
                     <td className="py-3.5 px-4">
                       <div className="space-y-0.5">
                         <div className="flex items-center space-x-1.5">
-                          <span className="font-bold text-slate-900">${p.lastPaymentAmount.toFixed(2)}</span>
+                          <span className="font-number font-bold text-slate-900 tracking-tight">${p.lastPaymentAmount.toFixed(2)}</span>
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-700">
                             {p.lastPaymentMethod}
                           </span>
                         </div>
-                        <p className="text-[10px] text-slate-400">{p.lastPaymentDate}</p>
-                        <p className="font-mono text-[9px] text-slate-400">{p.lastInvoiceNumber}</p>
+                        <p className="font-number text-[10px] text-slate-400">{p.lastPaymentDate}</p>
+                        <p className="font-number font-semibold text-[10px] text-slate-500 tracking-tight">{p.lastInvoiceNumber}</p>
                       </div>
                     </td>
 
                     {/* Next Fee Due */}
                     <td className="py-3.5 px-4">
                       <div className="space-y-0.5">
-                        <p className="font-bold text-slate-900">${p.nextDueAmount.toFixed(2)}</p>
-                        <p className="text-[11px] font-semibold text-slate-700">{p.nextDueDate}</p>
+                        <p className="font-number font-bold text-slate-900 tracking-tight">${p.nextDueAmount.toFixed(2)}</p>
+                        <p className="font-number text-[11px] font-semibold text-slate-700">{p.nextDueDate}</p>
                         <p className={`text-[10px] font-bold ${
                           p.daysRemaining < 0
                             ? 'text-rose-600'
@@ -493,3 +493,4 @@ export function AdminFeesView({
     </div>
   );
 }
+

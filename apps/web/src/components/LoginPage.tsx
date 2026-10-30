@@ -213,7 +213,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
             </button>
           </div>
           <p className="text-[10px] text-slate-400">
-            Password: <span className="font-mono text-slate-600 font-semibold">Password123!</span>
+            Password: <span className="font-number text-slate-700 font-bold">Password123!</span>
           </p>
         </div>
 

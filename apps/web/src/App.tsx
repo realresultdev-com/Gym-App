@@ -937,25 +937,25 @@ export default function App() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
                   <p className="text-xs font-medium text-slate-500">Active Members</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{activeMembersCount}</p>
+                  <p className="font-ios-stat text-2xl text-slate-900 mt-1">{activeMembersCount}</p>
                   <p className="text-[11px] text-slate-400 mt-1">Verified accounts</p>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
                   <p className="text-xs font-medium text-slate-500">Training Routines</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{gymState.programs.length}</p>
+                  <p className="font-ios-stat text-2xl text-slate-900 mt-1">{gymState.programs.length}</p>
                   <p className="text-[11px] text-slate-400 mt-1">Active in library</p>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
                   <p className="text-xs font-medium text-slate-500">Today Check-Ins</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{todayCheckInCount}</p>
+                  <p className="font-ios-stat text-2xl text-slate-900 mt-1">{todayCheckInCount}</p>
                   <p className="text-[11px] text-slate-400 mt-1">Floor visits today</p>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
                   <p className="text-xs font-medium text-slate-500">Monthly Revenue</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">${dynamicRevenue.toLocaleString()}</p>
+                  <p className="font-ios-stat text-2xl text-slate-900 mt-1">${dynamicRevenue.toLocaleString()}</p>
                   <p className="text-[11px] text-slate-400 mt-1">Active subscriptions</p>
                 </div>
               </div>
@@ -1242,9 +1242,9 @@ export default function App() {
                   {/* Clean Streak Card */}
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-slate-900">{gymState.streakDays} Days Active Streak</p>
+                      <p className="text-sm font-bold text-slate-900"><span className="font-number font-extrabold">{gymState.streakDays}</span> Days Active Streak</p>
                       <p className="text-xs text-slate-500 mt-0.5">
-                        {gymState.completedSessions.length} total workouts completed • Consistent progress
+                        <span className="font-number font-semibold">{gymState.completedSessions.length}</span> total workouts completed • Consistent progress
                       </p>
                     </div>
                     <IconChevronRight className="w-4 h-4 text-slate-400" />
@@ -1489,7 +1489,7 @@ export default function App() {
                         className="bg-white/95 px-4 py-2 rounded-xl border border-slate-200 flex items-center space-x-2 shadow-sm cursor-pointer hover:bg-white transition text-slate-900 text-xs font-semibold"
                       >
                         {gymState.activeWorkout.isRunning ? <IconPause className="w-3.5 h-3.5" /> : <IconPlay className="w-3.5 h-3.5" />}
-                        <span className="font-mono text-sm">{formatTimer(gymState.activeWorkout.timerSeconds)}</span>
+                        <span className="font-number font-bold text-sm tracking-wide">{formatTimer(gymState.activeWorkout.timerSeconds)}</span>
                       </button>
                       <button
                         onClick={resetTimer}
@@ -2034,14 +2034,14 @@ export default function App() {
             <div className="w-44 h-44 mx-auto bg-slate-950 rounded-xl p-3 flex flex-col items-center justify-center text-white">
               <div className="w-36 h-36 border-2 border-dashed border-amber-400 rounded-lg flex flex-col items-center justify-center">
                 <IconQrCode className="w-10 h-10 text-white mb-2" />
-                <span className="text-[10px] font-mono text-amber-300 font-bold">{qrToken}</span>
+                <span className="text-[10px] font-number text-amber-300 font-bold tracking-wider">{qrToken}</span>
               </div>
             </div>
 
             <div className="space-y-0.5">
               <p className="text-xs font-semibold text-slate-900">Scan at Turnstile</p>
               <p className="text-[11px] text-slate-500">
-                Rotates in: <span className="font-mono font-bold text-slate-900">{qrCountdown}s</span>
+                Rotates in: <span className="font-number font-bold text-slate-900">{qrCountdown}s</span>
               </p>
             </div>
 

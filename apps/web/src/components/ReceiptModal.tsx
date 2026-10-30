@@ -41,11 +41,11 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
         <div className="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200/60">
           <div>
             <p className="text-slate-400 font-medium">Invoice Number</p>
-            <p className="font-mono font-bold text-slate-900 mt-0.5">{record.invoiceNumber}</p>
+            <p className="font-number font-bold text-slate-900 tracking-tight mt-0.5">{record.invoiceNumber}</p>
           </div>
           <div>
             <p className="text-slate-400 font-medium">Date Paid</p>
-            <p className="font-semibold text-slate-900 mt-0.5">{record.paidDate}</p>
+            <p className="font-number font-bold text-slate-900 mt-0.5">{record.paidDate}</p>
           </div>
           <div>
             <p className="text-slate-400 font-medium">Billed To</p>
@@ -80,7 +80,7 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
                 <td className="py-3 px-4 text-slate-600 font-medium">
                   {record.nextDueDate}
                 </td>
-                <td className="py-3 px-4 text-right font-bold text-slate-900">
+                <td className="py-3 px-4 text-right font-number font-bold text-slate-900 tracking-tight">
                   ${record.amount.toFixed(2)}
                 </td>
               </tr>
@@ -88,13 +88,13 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
                 <td colSpan={2} className="py-2 px-4 text-slate-500 font-medium">
                   Facility Maintenance & Taxes
                 </td>
-                <td className="py-2 px-4 text-right text-slate-600 font-medium">$0.00</td>
+                <td className="py-2 px-4 text-right font-number text-slate-600 font-medium">$0.00</td>
               </tr>
               <tr className="bg-slate-50 font-bold border-t border-slate-200">
                 <td colSpan={2} className="py-3 px-4 text-slate-900 text-sm">
                   Total Paid
                 </td>
-                <td className="py-3 px-4 text-right text-base text-emerald-600">
+                <td className="py-3 px-4 text-right font-ios-stat text-lg text-emerald-600">
                   ${record.amount.toFixed(2)}
                 </td>
               </tr>
@@ -108,7 +108,7 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
             <IconCheckCircle className="w-4 h-4 text-emerald-600" />
             <span>PAYMENT STATUS: COMPLETED & VERIFIED</span>
           </div>
-          <span className="text-[11px] font-mono text-emerald-700">{record.recordedBy || 'System Verified'}</span>
+          <span className="text-[11px] font-semibold text-emerald-700">{record.recordedBy || 'System Verified'}</span>
         </div>
 
         {/* Actions */}
@@ -132,3 +132,4 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
     </div>
   );
 }
+

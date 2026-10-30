@@ -295,11 +295,11 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
           </div>
           <div>
             <p className="text-slate-400 font-medium">Cadence / Tempo</p>
-            <p className="font-bold text-amber-400 mt-0.5">{selectedExercise.tempo}</p>
+            <p className="font-number font-bold text-amber-400 mt-0.5">{selectedExercise.tempo}</p>
           </div>
           <div>
             <p className="text-slate-400 font-medium">Recommended Volume</p>
-            <p className="font-bold text-white mt-0.5">{selectedExercise.recommendedSetsReps}</p>
+            <p className="font-number font-bold text-white mt-0.5">{selectedExercise.recommendedSetsReps}</p>
           </div>
         </div>
 
@@ -329,7 +329,7 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <span className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-slate-900 text-white font-number font-bold text-xs flex items-center justify-center shrink-0">
                     {step.stepNumber}
                   </span>
                   <h4 className="text-sm font-bold text-slate-900">{step.title}</h4>

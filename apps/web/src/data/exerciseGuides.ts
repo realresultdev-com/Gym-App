@@ -155,3 +155,4 @@ export const FOUNDATIONAL_EXERCISES: ExerciseGuide[] = [
     ],
   },
 ];
+
