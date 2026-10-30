@@ -7,16 +7,23 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "concurrently -n \"WORKER,MOBILE\" -c \"cyan,magenta\" \"npm run worker:dev\" \"npm run mobile:start\"",
+    "dev:worker": "npm run dev --workspace=@gym-app/worker",
+    "dev:mobile": "npm run start --workspace=@gym-app/mobile",
+    "start": "npm run dev",
     "mobile:start": "npm run start --workspace=@gym-app/mobile",
     "mobile:android": "npm run android --workspace=@gym-app/mobile",
     "mobile:ios": "npm run ios --workspace=@gym-app/mobile",
     "mobile:web": "npm run web --workspace=@gym-app/mobile",
     "worker:dev": "npm run dev --workspace=@gym-app/worker",
     "worker:deploy": "npm run deploy --workspace=@gym-app/worker",
+    "db:migrate:local": "npm run db:migrate:local --workspace=@gym-app/worker",
+    "db:migrate:remote": "npm run db:migrate:remote --workspace=@gym-app/worker",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "wrangler": "^3.114.0"
   }
 }
