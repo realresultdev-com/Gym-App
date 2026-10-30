@@ -3,7 +3,6 @@ import type { ExerciseGuide } from '../types/gym';
 import { FOUNDATIONAL_EXERCISES } from '../data/exerciseGuides';
 import {
   IconPlay,
-  IconPause,
   IconCheckCircle,
   IconAlertCircle,
   IconDumbbell,
@@ -15,11 +14,8 @@ interface ExerciseCourseViewProps {
 
 export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseViewProps) {
   const [selectedExercise, setSelectedExercise] = useState<ExerciseGuide>(FOUNDATIONAL_EXERCISES[0]);
-  const [activeStepTab, setActiveStepTab] = useState<'ANIMATION' | 'STEP_1' | 'STEP_2' | 'STEP_3'>('ANIMATION');
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
+  const [activeStepTab, setActiveStepTab] = useState<'ANIMATION' | 'STEP_1' | 'STEP_2'>('ANIMATION');
   const [animationFrame, setAnimationFrame] = useState<'UP' | 'DOWN'>('UP');
-  const [repCount, setRepCount] = useState(0);
 
   // Practice Mode State
   const [practiceActive, setPracticeActive] = useState(false);
@@ -27,24 +23,16 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
   const [practiceRepsCompleted, setPracticeRepsCompleted] = useState(0);
   const [feedbackToast, setFeedbackToast] = useState('');
 
-  // Looping animation ticker simulating Spotebi gif / video demonstration
+  // Looping animation ticker simulating Spotebi gif demonstration
   useEffect(() => {
-    if (!isPlaying || activeStepTab !== 'ANIMATION') return;
+    if (activeStepTab !== 'ANIMATION') return;
 
-    const intervalTime = (2400 / playbackSpeed);
     const interval = setInterval(() => {
-      setAnimationFrame((prev) => {
-        if (prev === 'UP') {
-          return 'DOWN';
-        } else {
-          setRepCount((r) => r + 1);
-          return 'UP';
-        }
-      });
-    }, intervalTime / 2);
+      setAnimationFrame((prev) => (prev === 'UP' ? 'DOWN' : 'UP'));
+    }, 1200);
 
     return () => clearInterval(interval);
-  }, [isPlaying, playbackSpeed, activeStepTab]);
+  }, [activeStepTab]);
 
   const handleFinishPracticeSet = () => {
     const reps = practiceRepsCompleted + 10;
@@ -100,7 +88,6 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
                 onClick={() => {
                   setSelectedExercise(ex);
                   setActiveStepTab('ANIMATION');
-                  setRepCount(0);
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
                   isSelected
@@ -121,16 +108,10 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
       <div className="rounded-3xl bg-white border border-slate-200/90 shadow-sm overflow-hidden">
         
         {/* Visual Viewport Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/60">
-          
-          <div className="flex items-center space-x-2">
-            <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">
-              Visual Demonstration
-            </span>
-            <span className="text-[11px] px-2 py-0.5 rounded-md font-semibold bg-emerald-100 text-emerald-800">
-              {activeStepTab === 'ANIMATION' ? 'Looping Repetition' : activeStepTab.replace('_', ' ')}
-            </span>
-          </div>
+        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+          <span className="text-sm font-bold text-slate-900 tracking-tight">
+            {selectedExercise.name} Movement Demonstration
+          </span>
 
           {/* Mode Switcher Tabs */}
           <div className="flex items-center space-x-1 bg-white p-1 rounded-xl border border-slate-200 shadow-xs">
@@ -168,14 +149,12 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
         </div>
 
         {/* Visual Stage */}
-        <div className="relative p-6 sm:p-10 bg-gradient-to-b from-slate-50 to-white flex flex-col items-center justify-center min-h-[340px] select-none">
+        <div className="relative p-6 sm:p-10 bg-white flex flex-col items-center justify-center min-h-[320px] select-none">
           
           {/* Animated Video Simulation Mode */}
           {activeStepTab === 'ANIMATION' && (
-            <div className="flex flex-col items-center justify-center space-y-4 max-w-lg w-full">
-              
+            <div className="flex flex-col items-center justify-center max-w-lg w-full">
               <div className="relative w-full aspect-[16/10] max-h-72 bg-white rounded-3xl border border-slate-200/80 shadow-md p-4 flex items-center justify-center overflow-hidden">
-                
                 {/* Visual Position Graphic */}
                 <div className={`transition-all duration-500 ease-in-out transform flex flex-col items-center justify-center w-full h-full ${
                   animationFrame === 'DOWN' ? 'translate-y-4 scale-95' : 'translate-y-0 scale-100'
@@ -185,59 +164,6 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
                     alt="Push-Up Visual"
                     className="max-h-56 max-w-full object-contain filter contrast-105"
                   />
-                </div>
-
-                {/* Real-time Breathing & Tempo Prompt Overlay */}
-                <div className="absolute top-4 left-4 bg-slate-900/90 text-white px-3 py-1.5 rounded-xl backdrop-blur-md text-[11px] font-semibold flex items-center space-x-2 shadow-sm">
-                  <span className={`w-2 h-2 rounded-full ${animationFrame === 'DOWN' ? 'bg-amber-400 animate-ping' : 'bg-emerald-400'}`} />
-                  <span>
-                    {animationFrame === 'DOWN' ? 'Phase: Inhale on Descent (Hold 1s)' : 'Phase: Exhale Forcefully & Push'}
-                  </span>
-                </div>
-
-                {/* Rep Counter Badge */}
-                <div className="absolute top-4 right-4 bg-white/95 text-slate-900 border border-slate-200 px-3 py-1.5 rounded-xl text-[11px] font-bold shadow-sm">
-                  Demonstration Reps: <span className="text-amber-600 font-extrabold">{repCount}</span>
-                </div>
-
-                {/* Floor Guideline */}
-                <div className="absolute bottom-6 left-12 right-12 h-0.5 bg-slate-200/80 rounded-full" />
-              </div>
-
-              {/* Player Controls */}
-              <div className="flex items-center space-x-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
-                <button
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center space-x-1.5 transition cursor-pointer"
-                >
-                  {isPlaying ? (
-                    <>
-                      <IconPause className="w-3.5 h-3.5" />
-                      <span>Pause Demo</span>
-                    </>
-                  ) : (
-                    <>
-                      <IconPlay className="w-3.5 h-3.5" />
-                      <span>Play Animation</span>
-                    </>
-                  )}
-                </button>
-
-                <div className="flex items-center space-x-1 pl-2 border-l border-slate-200 text-xs">
-                  <span className="text-slate-400 text-[11px] font-medium mr-1">Speed:</span>
-                  {[0.5, 1, 1.5].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => setPlaybackSpeed(s)}
-                      className={`px-2 py-1 rounded-lg font-bold text-[11px] transition cursor-pointer ${
-                        playbackSpeed === s
-                          ? 'bg-slate-100 text-slate-950 border border-slate-300'
-                          : 'text-slate-500 hover:text-slate-800'
-                      }`}
-                    >
-                      {s}x
-                    </button>
-                  ))}
                 </div>
               </div>
             </div>
@@ -281,26 +207,6 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
             </div>
           )}
 
-        </div>
-
-        {/* Quick Specs Footer */}
-        <div className="p-4 sm:p-5 bg-slate-900 text-white grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div>
-            <p className="text-slate-400 font-medium">Difficulty</p>
-            <p className="font-bold text-white mt-0.5">{selectedExercise.difficulty}</p>
-          </div>
-          <div>
-            <p className="text-slate-400 font-medium">Equipment</p>
-            <p className="font-bold text-white mt-0.5">{selectedExercise.equipment}</p>
-          </div>
-          <div>
-            <p className="text-slate-400 font-medium">Cadence / Tempo</p>
-            <p className="font-number font-bold text-amber-400 mt-0.5">{selectedExercise.tempo}</p>
-          </div>
-          <div>
-            <p className="text-slate-400 font-medium">Recommended Volume</p>
-            <p className="font-number font-bold text-white mt-0.5">{selectedExercise.recommendedSetsReps}</p>
-          </div>
         </div>
 
       </div>
