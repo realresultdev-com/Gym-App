@@ -378,7 +378,7 @@ export function MemberFeesView({ profile, history, onPayFee, onViewReceipt }: Me
                   </svg>
                 </div>
                 <div className="text-[11px] text-slate-600">
-                  <p>UPI ID: <span className="font-number font-bold text-slate-900">fitpulse.studio@icici</span></p>
+                  <p>UPI ID: <span className="font-number font-bold text-slate-900">realfit.platform@icici</span></p>
                   <p className="text-slate-400 mt-0.5">Supports Google Pay, PhonePe, Paytm, CRED</p>
                 </div>
               </div>

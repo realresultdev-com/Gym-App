@@ -1,0 +1,7 @@
+# Compiler: R8 / ProGuard Mapping File
+# Package: com.realresultdev.realfit
+# Version Code: 2
+# Version Name: 1.0.1
+# Application: Real Fit - Mobile & Web Platform
+# Note: Capacitor JavaScript assets and native WebView bridge preserved.
+com.realresultdev.realfit.MainActivity -> com.realresultdev.realfit.MainActivity:

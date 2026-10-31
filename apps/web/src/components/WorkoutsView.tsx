@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FOUNDATIONAL_EXERCISES } from '../data/exerciseGuides';
 import { ExerciseGraphic } from './ExerciseGraphic';
+import { TrainingSummaryView } from './TrainingSummaryView';
 
 export interface WorkoutItem {
   id: string;
@@ -56,6 +57,7 @@ interface WorkoutsViewProps {
 }
 
 export function WorkoutsView({ onSelectWorkout, onSelectExercise }: WorkoutsViewProps) {
+  const [viewMode, setViewMode] = useState<'SCHEDULE' | 'LIBRARY'>('SCHEDULE');
   const [activeCategory, setActiveCategory] = useState<'ALL' | 'STRENGTH' | 'HIIT' | 'MOBILITY'>('ALL');
   const [exerciseCategory, setExerciseCategory] = useState<'ALL' | 'Push' | 'Pull' | 'Legs & Core'>('ALL');
 
@@ -75,13 +77,50 @@ export function WorkoutsView({ onSelectWorkout, onSelectExercise }: WorkoutsView
   ];
 
   return (
-    <div className="w-full max-w-xl mx-auto bg-white min-h-[640px] pb-16 flex flex-col antialiased">
-      {/* Title Header */}
-      <div className="px-5 pt-4 pb-3">
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight font-sans">
-          Workouts
-        </h1>
+    <div className="w-full max-w-xl mx-auto bg-[#EEF3F9] min-h-[640px] pb-16 flex flex-col antialiased">
+      {/* Top Experience Switcher (Today Schedule / Summary vs Workout Library) */}
+      <div className="px-5 pt-3 pb-1">
+        <div className="grid grid-cols-2 p-1.5 rounded-2xl bg-[#E2E8F0] border border-slate-200/80 shadow-xs mb-3">
+          <button
+            type="button"
+            onClick={() => setViewMode('SCHEDULE')}
+            className={`py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+              viewMode === 'SCHEDULE'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            📊 Today Schedule & Summary
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('LIBRARY')}
+            className={`py-2 px-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+              viewMode === 'LIBRARY'
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            🏋️ Programs & Exercise Guide
+          </button>
+        </div>
       </div>
+
+      {viewMode === 'SCHEDULE' ? (
+        <TrainingSummaryView
+          onStartLesson={(_lesson) => {
+            const ex = FOUNDATIONAL_EXERCISES.find((e) => e.name.toLowerCase().includes('plank')) || FOUNDATIONAL_EXERCISES[0];
+            onSelectExercise(ex.id);
+          }}
+        />
+      ) : (
+        <>
+          {/* Title Header */}
+          <div className="px-5 pt-1 pb-3">
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight font-sans">
+              Workout Library
+            </h1>
+          </div>
 
       {/* Category Pills Strip */}
       <div className="flex items-center space-x-2.5 overflow-x-auto px-5 mb-5 no-scrollbar scroll-smooth">
@@ -240,6 +279,8 @@ export function WorkoutsView({ onSelectWorkout, onSelectExercise }: WorkoutsView
           ))}
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

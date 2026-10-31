@@ -169,31 +169,47 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
   }
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-slate-50 font-sans">
+    <div className="min-h-screen w-full relative flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#EEF3F9] font-sans">
       {/* Background Photography with Soft Light Clean Gradient */}
       <div className="absolute inset-0 z-0">
         <img
           src="/partner-gym.jpg"
           alt="Modern Gym Interior"
-          className="w-full h-full object-cover filter brightness-[1.05] contrast-[0.98] scale-105 opacity-35"
+          className="w-full h-full object-cover filter brightness-[1.05] contrast-[0.95] scale-105 opacity-25"
         />
-        <div className="absolute inset-0 bg-gradient-to-tr from-slate-50/95 via-white/80 to-[#FF5A36]/10" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#EEF3F9]/95 via-[#F4F7FC]/85 to-[#6C5CE7]/10" />
       </div>
 
       {/* Decorative Brand Light Glows */}
       <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#FF5A36]/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-red-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#6C5CE7]/10 blur-3xl pointer-events-none" />
 
       {/* Main Login Container */}
       <div className="relative z-10 w-full max-w-xl mx-auto">
-        <div className="bg-white/95 backdrop-blur-2xl rounded-[32px] border border-slate-200/90 shadow-2xl shadow-slate-300/40 p-6 sm:p-10 text-slate-900">
+        <div className="bg-white rounded-[36px] border border-white/90 shadow-card-soft p-6 sm:p-10 text-slate-900 relative">
           
+          {/* Floating Dark Stats Badge (Matching Reference UI) */}
+          <div className="hidden sm:flex absolute -top-5 -right-5 z-20 bg-[#1B2138] text-white p-3.5 rounded-2xl shadow-widget-floating border border-slate-700/50 flex-col items-start select-none animate-in fade-in slide-in-from-top-2 duration-300">
+            <span className="text-[9px] font-black tracking-widest uppercase text-slate-400">
+              WORKOUTS
+            </span>
+            <div className="flex items-baseline space-x-1.5 mt-0.5">
+              <span className="text-xl font-black tracking-tight text-white font-numeric">
+                89
+              </span>
+              <span className="text-[11px] font-bold text-slate-400">Finished</span>
+            </div>
+            <span className="text-[9px] font-semibold text-emerald-400 mt-0.5">
+              ● 3 finished this week
+            </span>
+          </div>
+
           {/* Top Tour Banner / Switcher */}
           <div className="flex justify-center mb-4">
             <button
               type="button"
               onClick={() => setShowWelcomeTour(true)}
-              className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-950 transition shadow-sm cursor-pointer group active:scale-95"
+              className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#F1F5F9] hover:bg-slate-200/80 border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-950 transition shadow-xs cursor-pointer group active:scale-95"
             >
               <span className="text-[#FF5A36] group-hover:scale-110 transition-transform">✨</span>
               <span>View Onboarding: &ldquo;Run Your Gym. Smarter.&rdquo;</span>
@@ -213,8 +229,8 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
                 <span className="text-2xl font-black tracking-tight text-slate-950 block leading-none font-sans">
                   REAL <span className="text-[#FF5A36]">FIT</span>
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  PARTNER & TRAINING PLATFORM
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  WORKOUT & GYM PLATFORM
                 </span>
               </div>
             </div>
@@ -223,14 +239,14 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
             </p>
           </div>
 
-          {/* Role Switcher Tabs (MNC-Level Portal Navigation - Light Theme) */}
-          <div className="grid grid-cols-3 p-1.5 rounded-2xl bg-slate-100 border border-slate-200/80 mb-6">
+          {/* Role Switcher Tabs (Dribbble-Style Pill Segmented Control) */}
+          <div className="grid grid-cols-3 p-1.5 rounded-2xl bg-[#F1F5F9] border border-slate-200/70 mb-6">
             <button
               type="button"
               onClick={() => handleRoleTabChange('MEMBER')}
               className={`py-2.5 px-2 rounded-xl text-xs font-black transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer ${
                 selectedRole === 'MEMBER'
-                  ? 'bg-[#FF5A36] text-white shadow-md shadow-[#FF5A36]/30'
+                  ? 'bg-gradient-to-r from-[#FF5A36] to-red-500 text-white shadow-md shadow-[#FF5A36]/30'
                   : 'text-slate-600 hover:text-slate-950 hover:bg-white/60'
               }`}
             >
@@ -243,7 +259,7 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
               onClick={() => handleRoleTabChange('ADMIN')}
               className={`py-2.5 px-2 rounded-xl text-xs font-black transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer ${
                 selectedRole === 'ADMIN'
-                  ? 'bg-[#FF5A36] text-white shadow-md shadow-[#FF5A36]/30'
+                  ? 'bg-gradient-to-r from-[#FF5A36] to-red-500 text-white shadow-md shadow-[#FF5A36]/30'
                   : 'text-slate-600 hover:text-slate-950 hover:bg-white/60'
               }`}
             >
@@ -256,7 +272,7 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
               onClick={() => handleRoleTabChange('TRAINER')}
               className={`py-2.5 px-2 rounded-xl text-xs font-black transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 cursor-pointer ${
                 selectedRole === 'TRAINER'
-                  ? 'bg-[#FF5A36] text-white shadow-md shadow-[#FF5A36]/30'
+                  ? 'bg-gradient-to-r from-[#FF5A36] to-red-500 text-white shadow-md shadow-[#FF5A36]/30'
                   : 'text-slate-600 hover:text-slate-950 hover:bg-white/60'
               }`}
             >
@@ -283,7 +299,7 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5">
                 {selectedRole === 'ADMIN' ? 'Partner Account / Email' : 'Email Address'}
               </label>
               <div className="relative">
@@ -293,14 +309,14 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@domain.com"
-                  className="w-full py-3.5 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:border-[#FF5A36] focus:ring-2 focus:ring-[#FF5A36]/20 transition shadow-sm"
+                  className="w-full py-3.5 px-4.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/90 text-slate-900 placeholder-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:border-[#FF5A36] focus:ring-4 focus:ring-[#FF5A36]/10 transition shadow-xs"
                 />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <label className="block text-[11px] font-black uppercase tracking-wider text-slate-500">
                   Password
                 </label>
                 <button
@@ -318,7 +334,7 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full py-3.5 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:border-[#FF5A36] focus:ring-2 focus:ring-[#FF5A36]/20 transition shadow-sm"
+                  className="w-full py-3.5 px-4.5 rounded-2xl bg-[#F8FAFC] border border-slate-200/90 text-slate-900 placeholder-slate-400 text-sm font-medium focus:bg-white focus:outline-none focus:border-[#FF5A36] focus:ring-4 focus:ring-[#FF5A36]/10 transition shadow-xs"
                 />
               </div>
             </div>
@@ -334,14 +350,14 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
                 />
                 <span className="font-semibold text-slate-700">Keep me signed in</span>
               </label>
-              <span className="text-slate-400 font-semibold">SSL Encrypted</span>
+              <span className="text-slate-400 font-semibold text-[11px]">256-Bit TLS</span>
             </div>
 
             {/* Big Action Button */}
             <button
               type="submit"
               disabled={loading || redirecting}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#FF5A36] to-red-600 hover:from-[#ff6b4a] hover:to-red-500 text-white font-black text-sm tracking-wide transition shadow-lg shadow-[#FF5A36]/30 cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-60 mt-3 active:scale-[0.99]"
+              className="w-full py-4 rounded-full bg-gradient-to-r from-[#FF5A36] to-red-600 hover:from-[#ff6b4a] hover:to-red-500 text-white font-black text-sm tracking-wide transition shadow-pill-soft cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-60 mt-3 active:scale-[0.99]"
             >
               {loading ? (
                 <>
@@ -356,24 +372,24 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
             </button>
           </form>
 
-          {/* Quick-Access 1-Click Demo Profiles (For Play Store Reviewers & Testers - Light Theme) */}
-          <div className="mt-7 pt-5 border-t border-slate-200">
+          {/* Quick-Access 1-Click Demo Profiles (Matching Reference Style) */}
+          <div className="mt-7 pt-5 border-t border-slate-150">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">
                 Instant 1-Click Demo Profiles:
               </span>
-              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] text-indigo-700 font-bold bg-indigo-50 border border-indigo-200/80 px-2.5 py-0.5 rounded-full">
                 Reviewer Ready
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               {Object.values(PRESETS).map((p) => (
                 <button
                   key={p.role}
                   type="button"
                   onClick={() => handleQuickLogin(p.role)}
-                  className="p-2.5 rounded-2xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/90 transition flex items-center space-x-2 text-left cursor-pointer group shadow-sm active:scale-95"
+                  className="p-3 rounded-2xl bg-[#F8FAFC] hover:bg-white border border-slate-200/80 hover:border-slate-300 transition flex items-center space-x-2.5 text-left cursor-pointer group shadow-xs hover:shadow-md active:scale-95"
                 >
                   <img
                     src={p.avatarUrl}
@@ -384,7 +400,7 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
                     <span className="text-xs font-bold text-slate-900 block truncate group-hover:text-[#FF5A36] transition-colors">
                       {p.name.split(' ')[0]}
                     </span>
-                    <span className="text-[10px] text-slate-500 font-semibold block truncate">
+                    <span className="text-[10px] text-slate-400 font-semibold block truncate">
                       {p.role === 'ADMIN' ? 'Partner/Owner' : p.role === 'TRAINER' ? 'Trainer' : 'Member'}
                     </span>
                   </div>
@@ -394,13 +410,13 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
           </div>
 
           {/* Enterprise Security Footer */}
-          <div className="mt-6 pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-6 pt-4 border-t border-slate-150 flex flex-wrap items-center justify-between text-[11px] text-slate-400">
             <div className="flex items-center space-x-1.5">
               <span className="text-emerald-600">🔒</span>
-              <span className="font-medium text-slate-500">256-Bit TLS End-to-End Encryption</span>
+              <span className="font-semibold text-slate-500">256-Bit TLS End-to-End Encryption</span>
             </div>
             <div>
-              <span className="font-medium text-slate-500">Real Result Dev Partner Network</span>
+              <span className="font-semibold text-slate-400">Real Result Dev Platform</span>
             </div>
           </div>
 

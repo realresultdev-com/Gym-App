@@ -21,12 +21,12 @@ export function ReceiptModal({ record, profile, onClose }: ReceiptModalProps) {
         {/* Receipt Header & Close */}
         <div className="flex items-start justify-between border-b border-slate-100 pb-5">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-950 border border-slate-200 flex items-center justify-center">
-              <img src="/fitpulse-logo.png" alt="FITPULSE" className="w-full h-full object-cover" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-white border border-slate-200 flex items-center justify-center p-1 shadow-xs">
+              <img src="/real-fit-logo.png" alt="REAL FIT" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900 tracking-tight">FITPULSE STUDIO</h2>
-              <p className="text-[11px] text-slate-500">Official Membership Fee Receipt</p>
+              <h2 className="text-base font-extrabold text-slate-900 tracking-tight font-sans">REAL <span className="text-[#FF5A36]">FIT</span> PLATFORM</h2>
+              <p className="text-[11px] text-slate-500 font-medium">Official Membership Fee Receipt</p>
             </div>
           </div>
           <button

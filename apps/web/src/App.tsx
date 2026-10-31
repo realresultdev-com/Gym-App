@@ -597,18 +597,18 @@ export default function App() {
       {/* =========================================================
           TOP NAVIGATION BAR (Clean, Studio / Linear Style)
       ========================================================== */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200/80 w-full">
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 w-full pt-safe transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           
           {/* Brand Logo & Title */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('home')}>
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shadow-sm shrink-0">
-              <img src="/fitpulse-logo.png" alt="FITPULSE Logo" className="w-full h-full object-cover" />
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('workout')}>
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-white border border-slate-200 shadow-sm shrink-0 p-1 flex items-center justify-center">
+              <img src="/real-fit-logo.png" alt="Real Fit Logo" className="w-full h-full object-contain" />
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-base font-bold tracking-tight text-slate-900">FITPULSE</span>
-              <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">
-                STUDIO
+            <div className="flex items-center space-x-1.5">
+              <span className="text-base font-extrabold tracking-tight text-slate-900 font-sans">REAL <span className="text-[#FF5A36]">FIT</span></span>
+              <span className="text-[9px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                APP
               </span>
             </div>
           </div>
