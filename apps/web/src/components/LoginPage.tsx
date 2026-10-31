@@ -169,7 +169,7 @@ export function LoginPage({ onLoginSuccess, initialShowTour }: LoginPageProps) {
   }
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-[#EEF3F9] font-sans">
+    <div className="min-h-screen w-full relative flex items-center justify-center p-4 sm:p-6 pt-safe pb-safe overflow-hidden bg-[#EEF3F9] font-sans">
       {/* Background Photography with Soft Light Clean Gradient */}
       <div className="absolute inset-0 z-0">
         <img

@@ -686,31 +686,34 @@ export default function App() {
             )}
           </nav>
 
-          {/* User Profile, Notifications & Role Menu */}
-          <div className="flex items-center space-x-3">
+          {/* User Profile, Notifications & Actions */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
             {/* FitSquare Partner With Us Button */}
             <button
               onClick={() => setPartnerModalOpen(true)}
-              className="px-3 py-1.5 rounded-xl bg-[#FF5A36] text-white text-xs font-black hover:bg-[#e04825] transition cursor-pointer flex items-center space-x-1.5 shadow-sm active:scale-95"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#FF5A36] text-white text-xs font-black hover:bg-[#e04825] transition cursor-pointer flex items-center space-x-1 sm:space-x-1.5 shadow-sm active:scale-95"
             >
               <span className="text-xs">🏢</span>
-              <span>Partner With Us</span>
+              <span>
+                <span className="hidden sm:inline">Partner With Us</span>
+                <span className="sm:hidden">Partner</span>
+              </span>
             </button>
 
             {/* Notification Bell */}
             <button
               onClick={() => setNotificationsOpen(true)}
-              className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center relative cursor-pointer hover:bg-slate-50 transition text-slate-700"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 flex items-center justify-center relative cursor-pointer hover:bg-slate-50 transition text-slate-700"
               title="Notifications"
             >
               <IconBell className="w-4 h-4" />
               {unreadNotificationCount > 0 && (
-                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-500"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500"></span>
               )}
             </button>
 
             {/* Profile Avatar */}
-            <div className="flex items-center space-x-2 pl-2 border-l border-slate-200">
+            <div className="flex items-center space-x-2 pl-1.5 sm:pl-2 border-l border-slate-200">
               <img
                 src={
                   gymState.role === 'MEMBER'
@@ -732,10 +735,10 @@ export default function App() {
               </div>
             </div>
 
-            {/* Sign Out Action */}
+            {/* Sign Out Action (Visible on tablet/desktop; on mobile it is in the bottom navigation) */}
             <button
               onClick={handleSignOut}
-              className="text-xs font-medium text-slate-500 hover:text-slate-900 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+              className="hidden sm:block text-xs font-medium text-slate-500 hover:text-slate-900 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer"
               title="Sign Out"
             >
               Sign out
