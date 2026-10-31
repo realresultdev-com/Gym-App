@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Real Fit</string>
+    <string name="title_activity_main">Real Fit</string>
+    <string name="package_name">com.realresultdev.realfit</string>
+    <string name="custom_url_scheme">com.realresultdev.realfit</string>
+</resources>
