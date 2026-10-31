@@ -8,7 +8,7 @@ interface PartnerOnboardingModalProps {
 
 const SLIDES = [
   {
-    tag: 'PARTNER WITH FIT SQUARE!',
+    tag: 'PARTNER WITH REAL FIT!',
     titleLine1: 'Run Your Gym.',
     titleLine2: 'Smarter.',
     description:
@@ -90,7 +90,7 @@ export function PartnerOnboardingModal({
               </div>
               <div>
                 <span className="text-slate-950 font-black tracking-widest text-sm font-sans block leading-none">
-                  FIT SQUARE
+                  REAL FIT
                 </span>
                 <span className="text-slate-400 text-[8px] font-bold tracking-widest uppercase">
                   PARTNER PLATFORM
@@ -190,10 +190,10 @@ export function PartnerOnboardingModal({
           <div className="p-6 bg-white min-h-[580px] flex flex-col justify-between text-left">
             <div>
               <div className="flex items-center space-x-2 text-xs font-black text-[#FF5A36] uppercase tracking-wider mb-1">
-                <span>FitSquare Partner Network</span>
+                <span>Real Fit Partner Network</span>
               </div>
               <h3 className="text-2xl font-black text-slate-950 tracking-tight">
-                List Your Gym with FitSquare
+                List Your Gym with Real Fit
               </h3>
               <p className="text-xs text-slate-500 font-semibold mt-1">
                 Zero onboarding cost. Earn ₹120–₹250 per verified member check-in.
@@ -206,7 +206,7 @@ export function PartnerOnboardingModal({
                   </div>
                   <h4 className="text-sm font-black text-emerald-900">Application Approved!</h4>
                   <p className="text-xs text-emerald-700">
-                    Welcome to the FitSquare Partner Network. Loading your management dashboard...
+                    Welcome to the Real Fit Partner Network. Loading your management dashboard...
                   </p>
                 </div>
               ) : (
@@ -289,3 +289,4 @@ export function PartnerOnboardingModal({
     </div>
   );
 }
+

@@ -103,7 +103,7 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
                 <Text className="text-2xl">🏢</Text>
                 <View className="flex-1">
                   <Text className={`text-sm font-black ${role === 'ADMIN' ? 'text-white' : 'text-slate-900'}`}>
-                    FitSquare Partner / Gym Owner
+                    Real Fit Partner / Gym Owner
                   </Text>
                   <Text className={`text-xs ${role === 'ADMIN' ? 'text-slate-300' : 'text-slate-500'}`}>
                     Run your gym smarter: live footfall, instant bank payouts & bundled free exercise course

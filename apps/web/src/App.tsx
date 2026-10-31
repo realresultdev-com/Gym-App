@@ -766,7 +766,7 @@ export default function App() {
                 <div>
                   <div className="flex items-center space-x-2.5 mb-1.5">
                     <span className="px-2.5 py-0.5 rounded-full bg-[#FF5A36] text-white text-[10px] font-black uppercase tracking-wider">
-                      FitSquare Verified Partner
+                      Real Fit Verified Partner
                     </span>
                     <span className="text-white/60 text-xs font-semibold">
                       ID: FS-BLR-0042 • Elite Tier

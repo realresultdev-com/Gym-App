@@ -42,10 +42,10 @@ export function AdminDashboardView({ onPreviewExerciseCourse }: AdminDashboardVi
             </View>
             <View>
               <Text className="text-white font-black text-sm tracking-wide">
-                FIT SQUARE PARTNER
+                REAL FIT PARTNER
               </Text>
               <Text className="text-white/60 text-[10px] font-semibold">
-                ID: FS-BLR-0042 • Elite Tier
+                ID: RF-BLR-0042 • Elite Tier
               </Text>
             </View>
           </View>

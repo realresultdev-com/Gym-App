@@ -17,7 +17,7 @@ interface PartnerOnboardingScreenProps {
 
 const SLIDES = [
   {
-    tag: 'PARTNER WITH FIT SQUARE!',
+    tag: 'PARTNER WITH REAL FIT!',
     titleLine1: 'Run Your Gym.',
     titleLine2: 'Smarter.',
     description:
@@ -82,7 +82,7 @@ export function PartnerOnboardingScreen({
               </View>
               <View>
                 <Text className="text-slate-950 text-base font-black tracking-widest font-sans">
-                  FIT SQUARE
+                  REAL FIT
                 </Text>
                 <Text className="text-slate-400 text-[9px] font-bold tracking-widest uppercase">
                   PARTNER PLATFORM
@@ -158,3 +158,4 @@ export function PartnerOnboardingScreen({
     </View>
   );
 }
+
