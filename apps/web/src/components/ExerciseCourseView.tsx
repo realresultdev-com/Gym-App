@@ -11,14 +11,28 @@ import {
 } from './Icons';
 
 interface ExerciseCourseViewProps {
+  initialExerciseId?: string;
   onLogCompletedSession?: (exerciseName: string, sets: number, reps: number) => void;
+  onBack?: () => void;
+  workoutTitle?: string;
 }
 
 type CategoryFilter = 'ALL' | 'Push' | 'Pull' | 'Legs & Core';
 
-export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseViewProps) {
+export function ExerciseCourseView({
+  initialExerciseId,
+  onLogCompletedSession,
+  onBack,
+  workoutTitle,
+}: ExerciseCourseViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('ALL');
-  const [selectedExercise, setSelectedExercise] = useState<ExerciseGuide>(FOUNDATIONAL_EXERCISES[0]);
+  const [selectedExercise, setSelectedExercise] = useState<ExerciseGuide>(() => {
+    if (initialExerciseId) {
+      const match = FOUNDATIONAL_EXERCISES.find((e) => e.id === initialExerciseId);
+      if (match) return match;
+    }
+    return FOUNDATIONAL_EXERCISES[0];
+  });
   const [activeTab, setActiveTab] = useState<'ANIMATION' | 'STEP_1' | 'STEP_2' | 'STEP_3'>('ANIMATION');
   const [animationFrame, setAnimationFrame] = useState<'START' | 'FINISH'>('START');
   const [feedbackToast, setFeedbackToast] = useState('');
@@ -89,7 +103,24 @@ export function ExerciseCourseView({ onLogCompletedSession }: ExerciseCourseView
 
   return (
     <div className="space-y-4 antialiased">
-      
+      {/* Optional Top Return Navigation inside Workout view */}
+      {onBack && (
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+          <button
+            onClick={onBack}
+            className="flex items-center space-x-1.5 text-xs font-black text-slate-800 hover:text-slate-900 cursor-pointer bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:bg-slate-50 transition"
+          >
+            <IconChevronLeft className="w-4 h-4 text-[#FF5A36]" />
+            <span>← Back to Workouts</span>
+          </button>
+          {workoutTitle && (
+            <span className="px-3.5 py-1 rounded-full bg-[#FF5A36]/10 text-[#FF5A36] text-xs font-black uppercase tracking-wider">
+              {workoutTitle}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Toast Feedback */}
       {feedbackToast && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-semibold animate-in slide-in-from-bottom-3 border border-slate-700">

@@ -53,6 +53,19 @@ export const WORKOUT_ITEMS: WorkoutItem[] = [
   },
 ];
 
+export const CORE_EXERCISES = [
+  { id: 'ex-1', name: '1. Standard Push-Up', category: 'Push', target: '3 sets × 8–12 reps', muscles: 'Chest, Shoulders, Triceps, Core' },
+  { id: 'ex-2', name: '2. Seated Dumbbell Shoulder Press', category: 'Push', target: '3 sets × 10 reps', muscles: 'Deltoids, Triceps' },
+  { id: 'ex-3', name: '3. Machine Chest Press', category: 'Push', target: '3 sets × 12 reps', muscles: 'Chest, Triceps' },
+  { id: 'ex-4', name: '4. Lat Pulldown', category: 'Pull', target: '3 sets × 10–12 reps', muscles: 'Lats, Upper Back, Biceps' },
+  { id: 'ex-5', name: '5. Seated Cable Row', category: 'Pull', target: '3 sets × 10 reps', muscles: 'Middle Back, Lats, Biceps' },
+  { id: 'ex-6', name: '6. Dumbbell Biceps Curl', category: 'Pull', target: '3 sets × 12 reps', muscles: 'Biceps Brachii' },
+  { id: 'ex-7', name: '7. Leg Press Machine', category: 'Legs & Core', target: '3 sets × 10 reps', muscles: 'Quads, Glutes' },
+  { id: 'ex-8', name: '8. Dumbbell Goblet Squat', category: 'Legs & Core', target: '3 sets × 10 reps', muscles: 'Quads, Glutes, Hamstrings, Core' },
+  { id: 'ex-9', name: '9. Romanian Dumbbell Deadlift', category: 'Legs & Core', target: '3 sets × 10 reps', muscles: 'Hamstrings, Glutes, Lower Back' },
+  { id: 'ex-10', name: '10. Forearm Plank', category: 'Legs & Core', target: '3 sets × 30–45s', muscles: 'Abdominals, Lower Back' },
+];
+
 interface WorkoutsScreenProps {
   onSelectWorkout?: (workout: WorkoutItem) => void;
 }
@@ -76,7 +89,7 @@ export function WorkoutsScreen({ onSelectWorkout }: WorkoutsScreenProps) {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 28 }}
+        contentContainerStyle={{ paddingBottom: 36 }}
       >
         {/* Header Title - Exactly matching the screenshot */}
         <View className="px-5 pt-3 pb-3">
@@ -180,6 +193,49 @@ export function WorkoutsScreen({ onSelectWorkout }: WorkoutsScreenProps) {
               </View>
             </TouchableOpacity>
           ))}
+        </View>
+
+        {/* Foundational Exercises Integrated Directly inside Workout */}
+        <View className="px-5 mt-8">
+          <View className="flex-row items-center justify-between mb-3">
+            <View>
+              <Text className="text-slate-900 text-xl font-black tracking-tight">Exercise Library</Text>
+              <Text className="text-slate-400 text-xs font-semibold mt-0.5">10 foundational movement guides</Text>
+            </View>
+            <View className="px-3 py-1 rounded-full bg-[#FF5A36]/10">
+              <Text className="text-[#FF5A36] text-xs font-black">10 Exercises</Text>
+            </View>
+          </View>
+
+          <View className="space-y-2.5 gap-2.5">
+            {CORE_EXERCISES.map((ex) => (
+              <TouchableOpacity
+                key={ex.id}
+                activeOpacity={0.8}
+                onPress={() => onSelectWorkout && onSelectWorkout({
+                  id: ex.id,
+                  tag: ex.category.toUpperCase(),
+                  title: ex.name,
+                  durationMin: 15,
+                  caloriesKcal: 120,
+                  category: 'STRENGTH',
+                  imageSource: require('../../assets/workouts/full-body-power.jpg'),
+                  difficulty: 'Beginner',
+                })}
+                className="p-3.5 rounded-2xl bg-white border border-slate-100 shadow-2xs flex-row items-center justify-between"
+              >
+                <View className="flex-1 mr-2">
+                  <View className="flex-row items-center space-x-2 gap-2 mb-0.5">
+                    <Text className="text-[10px] font-black uppercase text-slate-400">{ex.category}</Text>
+                    <Text className="text-[10px] font-bold text-[#FF5A36]">{ex.target}</Text>
+                  </View>
+                  <Text className="text-slate-900 font-black text-sm">{ex.name}</Text>
+                  <Text className="text-slate-400 text-xs font-medium mt-0.5">{ex.muscles}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </View>

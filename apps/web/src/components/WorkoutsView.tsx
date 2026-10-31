@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { FOUNDATIONAL_EXERCISES } from '../data/exerciseGuides';
+import { ExerciseGraphic } from './ExerciseGraphic';
 
 export interface WorkoutItem {
   id: string;
@@ -9,6 +11,7 @@ export interface WorkoutItem {
   category: 'ALL' | 'STRENGTH' | 'HIIT' | 'MOBILITY';
   imageSrc: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  initialExerciseId?: string;
 }
 
 export const WORKOUT_ITEMS: WorkoutItem[] = [
@@ -21,6 +24,7 @@ export const WORKOUT_ITEMS: WorkoutItem[] = [
     category: 'STRENGTH',
     imageSrc: '/workouts/full-body-power.jpg',
     difficulty: 'Advanced',
+    initialExerciseId: 'ex-01-pushup',
   },
   {
     id: 'w2',
@@ -31,6 +35,7 @@ export const WORKOUT_ITEMS: WorkoutItem[] = [
     category: 'HIIT',
     imageSrc: '/workouts/burn-and-sweat.jpg',
     difficulty: 'Intermediate',
+    initialExerciseId: 'ex-08-goblet-squat',
   },
   {
     id: 'w3',
@@ -41,20 +46,26 @@ export const WORKOUT_ITEMS: WorkoutItem[] = [
     category: 'MOBILITY',
     imageSrc: '/workouts/morning-flow.jpg',
     difficulty: 'Beginner',
+    initialExerciseId: 'ex-10-plank',
   },
 ];
 
 interface WorkoutsViewProps {
-  onSelectWorkout?: (workout: WorkoutItem) => void;
-  onOpenExerciseGuide?: () => void;
+  onSelectWorkout: (workout: WorkoutItem) => void;
+  onSelectExercise: (exerciseId: string) => void;
 }
 
-export function WorkoutsView({ onSelectWorkout, onOpenExerciseGuide }: WorkoutsViewProps) {
+export function WorkoutsView({ onSelectWorkout, onSelectExercise }: WorkoutsViewProps) {
   const [activeCategory, setActiveCategory] = useState<'ALL' | 'STRENGTH' | 'HIIT' | 'MOBILITY'>('ALL');
+  const [exerciseCategory, setExerciseCategory] = useState<'ALL' | 'Push' | 'Pull' | 'Legs & Core'>('ALL');
 
   const filteredWorkouts = activeCategory === 'ALL'
     ? WORKOUT_ITEMS
     : WORKOUT_ITEMS.filter((w) => w.category === activeCategory);
+
+  const filteredExercises = exerciseCategory === 'ALL'
+    ? FOUNDATIONAL_EXERCISES
+    : FOUNDATIONAL_EXERCISES.filter((ex) => ex.category === exerciseCategory);
 
   const categories: Array<{ id: 'ALL' | 'STRENGTH' | 'HIIT' | 'MOBILITY'; label: string }> = [
     { id: 'ALL', label: 'ALL' },
@@ -64,7 +75,7 @@ export function WorkoutsView({ onSelectWorkout, onOpenExerciseGuide }: WorkoutsV
   ];
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white min-h-[640px] pb-12 flex flex-col">
+    <div className="w-full max-w-xl mx-auto bg-white min-h-[640px] pb-16 flex flex-col antialiased">
       {/* Title Header */}
       <div className="px-5 pt-4 pb-3">
         <h1 className="text-3xl font-black text-slate-900 tracking-tight font-sans">
@@ -97,10 +108,7 @@ export function WorkoutsView({ onSelectWorkout, onOpenExerciseGuide }: WorkoutsV
         {filteredWorkouts.map((workout) => (
           <div
             key={workout.id}
-            onClick={() => {
-              if (onSelectWorkout) onSelectWorkout(workout);
-              else if (onOpenExerciseGuide) onOpenExerciseGuide();
-            }}
+            onClick={() => onSelectWorkout(workout)}
             className="group relative w-full h-52 rounded-[28px] overflow-hidden bg-slate-950 cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 select-none"
           >
             {/* Background Image */}
@@ -151,6 +159,86 @@ export function WorkoutsView({ onSelectWorkout, onOpenExerciseGuide }: WorkoutsV
             </div>
           </div>
         ))}
+      </div>
+
+      {/* ========================================================
+          EXERCISE MOVEMENTS DIRECTLY INSIDE WORKOUT
+      ======================================================== */}
+      <div className="mt-10 px-5">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">
+              Exercise Library
+            </h2>
+            <p className="text-xs text-slate-500 font-semibold mt-0.5">
+              10 foundational movements with step-by-step form guides
+            </p>
+          </div>
+          <span className="text-xs font-black text-[#FF5A36] bg-[#FF5A36]/10 px-3 py-1 rounded-full">
+            {FOUNDATIONAL_EXERCISES.length} Exercises
+          </span>
+        </div>
+
+        {/* Exercise Category Selector */}
+        <div className="flex items-center space-x-2 mb-4 overflow-x-auto no-scrollbar pb-1">
+          {(['ALL', 'Push', 'Pull', 'Legs & Core'] as const).map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setExerciseCategory(cat)}
+              className={`px-3 py-1 rounded-full text-xs font-black transition-all cursor-pointer whitespace-nowrap ${
+                exerciseCategory === cat
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {cat === 'ALL' ? 'All (10)' : cat}
+            </button>
+          ))}
+        </div>
+
+        {/* List of 10 Exercises */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {filteredExercises.map((exercise) => (
+            <div
+              key={exercise.id}
+              onClick={() => onSelectExercise(exercise.id)}
+              className="group p-3.5 rounded-2xl bg-white border border-slate-200/80 hover:border-[#FF5A36]/60 shadow-2xs hover:shadow-md transition-all cursor-pointer flex items-center space-x-3"
+            >
+              {/* Exercise Thumbnail Graphic */}
+              <div className="w-16 h-16 rounded-xl bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100 group-hover:scale-105 transition-transform flex-shrink-0">
+                <ExerciseGraphic
+                  slug={exercise.slug}
+                  frame="START"
+                  className="w-full h-full object-contain p-1"
+                />
+              </div>
+
+              {/* Title & Target Info */}
+              <div className="flex-1 min-w-0 text-left">
+                <div className="flex items-center space-x-1.5 mb-0.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                    {exercise.category}
+                  </span>
+                  <span className="text-[10px] font-bold text-[#FF5A36]">
+                    {exercise.recommendedSetsReps}
+                  </span>
+                </div>
+                <h3 className="text-xs font-black text-slate-900 group-hover:text-[#FF5A36] transition-colors truncate">
+                  {exercise.name}
+                </h3>
+                <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
+                  {exercise.targetMusclesPrimary.join(', ')}
+                </p>
+              </div>
+
+              <div className="text-slate-300 group-hover:text-[#FF5A36] transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

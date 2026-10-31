@@ -3,7 +3,6 @@ import type {
   UserRole,
   AuthUser,
   WorkoutProgram,
-  SetItem,
   GymMember,
   NotificationItem,
   FeePaymentRecord,
@@ -25,7 +24,6 @@ import {
   IconBell,
   IconClose,
   IconPlay,
-  IconPause,
   IconChevronRight,
   IconCreditCard,
 } from './components/Icons';
@@ -63,8 +61,9 @@ export default function App() {
   };
 
   // Navigation & Modals
-  const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'fees' | 'guide' | 'admin'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'fees' | 'admin'>('workout');
   const [selectedWorkoutForSession, setSelectedWorkoutForSession] = useState<WorkoutItem | null>(null);
+  const [selectedExerciseForWorkout, setSelectedExerciseForWorkout] = useState<string | null>(null);
   const [activeReceiptRecord, setActiveReceiptRecord] = useState<FeePaymentRecord | null>(null);
   const [activeReceiptProfile, setActiveReceiptProfile] = useState<MemberFeeProfile | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -361,143 +360,6 @@ export default function App() {
     return () => clearInterval(interval);
   }, [gymState.activeWorkout.isRunning]);
 
-  const toggleTimerRunning = () => {
-    setGymState((prev) => ({
-      ...prev,
-      activeWorkout: {
-        ...prev.activeWorkout,
-        isRunning: !prev.activeWorkout.isRunning,
-      },
-    }));
-  };
-
-  const resetTimer = () => {
-    setGymState((prev) => ({
-      ...prev,
-      activeWorkout: {
-        ...prev.activeWorkout,
-        timerSeconds: 0,
-      },
-    }));
-  };
-
-  const toggleSetCompleted = (index: number) => {
-    setGymState((prev) => {
-      const updatedSets = prev.activeWorkout.sets.map((item, idx) =>
-        idx === index ? { ...item, completed: !item.completed } : item
-      );
-      return {
-        ...prev,
-        activeWorkout: {
-          ...prev.activeWorkout,
-          sets: updatedSets,
-        },
-      };
-    });
-  };
-
-  const handleAddSet = () => {
-    setGymState((prev) => {
-      const nextSetNum = prev.activeWorkout.sets.length + 1;
-      const lastWeight = prev.activeWorkout.sets[prev.activeWorkout.sets.length - 1]?.weight || 'Bodyweight';
-      const lastReps = prev.activeWorkout.sets[prev.activeWorkout.sets.length - 1]?.reps || 10;
-      const newSet: SetItem = {
-        id: `set-${Date.now()}`,
-        set: nextSetNum,
-        reps: lastReps,
-        weight: lastWeight,
-        completed: false,
-      };
-      return {
-        ...prev,
-        activeWorkout: {
-          ...prev.activeWorkout,
-          sets: [...prev.activeWorkout.sets, newSet],
-        },
-      };
-    });
-  };
-
-  const handleDeleteSet = (id: string) => {
-    setGymState((prev) => ({
-      ...prev,
-      activeWorkout: {
-        ...prev.activeWorkout,
-        sets: prev.activeWorkout.sets
-          .filter((s) => s.id !== id)
-          .map((s, idx) => ({ ...s, set: idx + 1 })),
-      },
-    }));
-  };
-
-  const handleUpdateSetReps = (index: number, newReps: number) => {
-    if (newReps < 1) return;
-    setGymState((prev) => ({
-      ...prev,
-      activeWorkout: {
-        ...prev.activeWorkout,
-        sets: prev.activeWorkout.sets.map((s, idx) =>
-          idx === index ? { ...s, reps: newReps } : s
-        ),
-      },
-    }));
-  };
-
-  const handleUpdateSetWeight = (index: number, newWeight: string) => {
-    setGymState((prev) => ({
-      ...prev,
-      activeWorkout: {
-        ...prev.activeWorkout,
-        sets: prev.activeWorkout.sets.map((s, idx) =>
-          idx === index ? { ...s, weight: newWeight } : s
-        ),
-      },
-    }));
-  };
-
-  const handleFinishWorkout = () => {
-    const completedCount = gymState.activeWorkout.sets.filter((s) => s.completed).length;
-    const totalCount = gymState.activeWorkout.sets.length;
-
-    const newSessionLog = {
-      id: `session-${Date.now()}`,
-      programId: gymState.activeWorkout.programId,
-      programTitle: gymState.activeWorkout.programTitle,
-      startedAt: new Date(Date.now() - gymState.activeWorkout.timerSeconds * 1000).toISOString(),
-      completedAt: new Date().toISOString(),
-      durationSeconds: gymState.activeWorkout.timerSeconds,
-      setsCompleted: completedCount,
-      totalSets: totalCount,
-    };
-
-    setGymState((prev) => ({
-      ...prev,
-      completedSessions: [newSessionLog, ...prev.completedSessions],
-      streakDays: prev.streakDays + 1,
-      notifications: [
-        {
-          id: `notif-${Date.now()}`,
-          title: 'Workout Completed',
-          message: `Completed ${completedCount} of ${totalCount} sets for ${gymState.activeWorkout.programTitle}.`,
-          type: 'WORKOUT',
-          createdAt: 'Just now',
-          read: false,
-          author: 'Workout Tracker',
-        },
-        ...prev.notifications,
-      ],
-      activeWorkout: {
-        ...prev.activeWorkout,
-        timerSeconds: 0,
-        isRunning: false,
-        sets: prev.activeWorkout.sets.map((s) => ({ ...s, completed: false })),
-      },
-    }));
-
-    alert(`Workout completed!\n${completedCount} of ${totalCount} sets recorded.\nActive streak: ${gymState.streakDays + 1} days.`);
-    setActiveTab('home');
-  };
-
   const selectProgramForWorkout = (prog: WorkoutProgram) => {
     setGymState((prev) => ({
       ...prev,
@@ -707,12 +569,7 @@ export default function App() {
     return gymState.programs.filter((p) => p.category.toLowerCase() === selectedCategory.toLowerCase());
   }, [gymState.programs, selectedCategory]);
 
-  const formatTimer = (totalSec: number) => {
-    const hours = Math.floor(totalSec / 3600);
-    const mins = Math.floor((totalSec % 3600) / 60);
-    const secs = totalSec % 60;
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+
 
   const formatCheckInDuration = (sec: number) => {
     const mins = Math.floor(sec / 60);
@@ -763,7 +620,11 @@ export default function App() {
             {gymState.role !== 'ADMIN' && (
               <>
                 <button
-                  onClick={() => setActiveTab('workout')}
+                  onClick={() => {
+                    setActiveTab('workout');
+                    setSelectedWorkoutForSession(null);
+                    setSelectedExerciseForWorkout(null);
+                  }}
                   className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
                     activeTab === 'workout'
                       ? 'bg-white text-slate-900 shadow-sm'
@@ -772,18 +633,6 @@ export default function App() {
                 >
                   <IconDumbbell className="w-3.5 h-3.5" />
                   <span>Workout</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('guide')}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
-                    activeTab === 'guide'
-                      ? 'bg-white text-slate-900 shadow-sm font-bold'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <IconDumbbell className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Exercise Guide</span>
                 </button>
 
                 <button
@@ -1113,42 +962,6 @@ export default function App() {
               MEMBER VIEW (Clean, Responsive Multi-Column Layout)
           ========================================================== */
           <div>
-            {activeTab === 'guide' && (
-              <ExerciseCourseView
-                onLogCompletedSession={(exName, sets, reps) => {
-                  setGymState((prev) => ({
-                    ...prev,
-                    streakDays: prev.streakDays + 1,
-                    completedSessions: [
-                      {
-                        id: `sess-${Date.now()}`,
-                        programId: 'prog-pushup-guide',
-                        programTitle: `${exName} Technique Practice`,
-                        startedAt: 'Today',
-                        completedAt: 'Just now',
-                        durationSeconds: 300,
-                        setsCompleted: sets,
-                        totalSets: sets,
-                        notes: `Spotebi guide completed: ${reps} total repetitions.`,
-                      },
-                      ...prev.completedSessions,
-                    ],
-                    notifications: [
-                      {
-                        id: `notif-${Date.now()}`,
-                        title: 'Exercise Guide Completed',
-                        message: `Great form! You completed 3 sets of ${exName}. Streak increased to ${prev.streakDays + 1} days!`,
-                        type: 'WORKOUT',
-                        createdAt: 'Just now',
-                        read: false,
-                        author: 'Exercise Coach',
-                      },
-                      ...prev.notifications,
-                    ],
-                  }));
-                }}
-              />
-            )}
 
             {activeTab === 'fees' && (
               <MemberFeesView
@@ -1211,9 +1024,13 @@ export default function App() {
                     />
                   </div>
 
-                  {/* Featured Course Card: Push-Up Mastery */}
+                  {/* Featured Exercise: Push-Up Mastery (Directly inside Workout) */}
                   <div
-                    onClick={() => setActiveTab('guide')}
+                    onClick={() => {
+                      setActiveTab('workout');
+                      setSelectedExerciseForWorkout('ex-01-pushup');
+                      setSelectedWorkoutForSession(null);
+                    }}
                     className="p-5 rounded-3xl bg-slate-900 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-800 transition"
                   >
                     <div className="flex items-center space-x-3.5">
@@ -1469,180 +1286,96 @@ export default function App() {
             )}
 
             {/* =========================================================
-                WORKOUT TRACKER VIEW
+                WORKOUT VIEW (Unified with all Exercise Content)
             ========================================================== */}
-            {activeTab === 'workout' && !selectedWorkoutForSession && (
+            {activeTab === 'workout' && !selectedWorkoutForSession && !selectedExerciseForWorkout && (
               <WorkoutsView
                 onSelectWorkout={(workout) => setSelectedWorkoutForSession(workout)}
-                onOpenExerciseGuide={() => setActiveTab('guide')}
+                onSelectExercise={(exerciseId) => setSelectedExerciseForWorkout(exerciseId)}
               />
             )}
 
+            {/* Direct Exercise View inside Workout */}
+            {activeTab === 'workout' && selectedExerciseForWorkout && (
+              <ExerciseCourseView
+                initialExerciseId={selectedExerciseForWorkout}
+                onBack={() => setSelectedExerciseForWorkout(null)}
+                onLogCompletedSession={(exName, sets, reps) => {
+                  setGymState((prev) => ({
+                    ...prev,
+                    streakDays: prev.streakDays + 1,
+                    completedSessions: [
+                      {
+                        id: `sess-${Date.now()}`,
+                        programId: 'prog-exercise-guide',
+                        programTitle: `${exName} Movement Practice`,
+                        startedAt: 'Today',
+                        completedAt: 'Just now',
+                        durationSeconds: 300,
+                        setsCompleted: sets,
+                        totalSets: sets,
+                        notes: `Form checked: ${reps} total repetitions logged.`,
+                      },
+                      ...prev.completedSessions,
+                    ],
+                    notifications: [
+                      {
+                        id: `notif-${Date.now()}`,
+                        title: 'Exercise Session Logged',
+                        message: `Great form! You completed 3 sets of ${exName}. Streak increased to ${prev.streakDays + 1} days!`,
+                        type: 'WORKOUT',
+                        createdAt: 'Just now',
+                        read: false,
+                        author: 'Exercise Coach',
+                      },
+                      ...prev.notifications,
+                    ],
+                  }));
+                }}
+              />
+            )}
+
+            {/* Selected Workout Routine inside Workout */}
             {activeTab === 'workout' && selectedWorkoutForSession && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                  <button
-                    onClick={() => setSelectedWorkoutForSession(null)}
-                    className="flex items-center space-x-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 cursor-pointer"
-                  >
-                    <span>← Back to Workouts</span>
-                  </button>
-                  <div className="flex items-center space-x-2">
-                    <span className="px-3 py-1 rounded-full bg-[#FF5A36]/10 text-[#FF5A36] text-xs font-black uppercase tracking-wider">
-                      {selectedWorkoutForSession.title}
-                    </span>
-                    <button
-                      onClick={() => setActiveTab('guide')}
-                      className="px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 cursor-pointer"
-                    >
-                      View Exercise Guide
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                
-                {/* Left Side: Exercise Hero Image & Live Timer */}
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="h-80 sm:h-96 w-full rounded-2xl overflow-hidden bg-slate-100 relative border border-slate-200/80 shadow-sm">
-                    <img
-                      src="https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=800"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-lg shadow-sm text-xs font-semibold text-slate-900">
-                      {gymState.activeWorkout.programTitle}
-                    </div>
-
-                    <div className="absolute bottom-4 left-4 flex items-center space-x-2">
-                      <button
-                        onClick={toggleTimerRunning}
-                        className="bg-white/95 px-4 py-2 rounded-xl border border-slate-200 flex items-center space-x-2 shadow-sm cursor-pointer hover:bg-white transition text-slate-900 text-xs font-semibold"
-                      >
-                        {gymState.activeWorkout.isRunning ? <IconPause className="w-3.5 h-3.5" /> : <IconPlay className="w-3.5 h-3.5" />}
-                        <span className="font-number font-bold text-sm tracking-wide">{formatTimer(gymState.activeWorkout.timerSeconds)}</span>
-                      </button>
-                      <button
-                        onClick={resetTimer}
-                        title="Reset Timer"
-                        className="bg-white/95 w-8 h-8 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 shadow-sm cursor-pointer text-xs"
-                      >
-                        ↺
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900">{gymState.activeWorkout.programTitle}</h2>
-                      <p className="text-xs text-slate-500 mt-0.5">Primary Target: Latissimus Dorsi & Posterior Chain</p>
-                    </div>
-                    <span className="text-xs font-medium text-slate-500">
-                      {gymState.activeWorkout.sets.filter((s) => s.completed).length} of {gymState.activeWorkout.sets.length} sets logged
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right Side: Form Cues & Set Logger */}
-                <div className="lg:col-span-5 space-y-4">
-                  
-                  {/* Form Cues */}
-                  <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-2.5">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Form Cues</h3>
-                    <div className="flex items-start space-x-3 text-xs text-slate-700 leading-relaxed">
-                      <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-                      <p>Overhand grip slightly wider than shoulder width. Retract scapulae prior to pull.</p>
-                    </div>
-                    <div className="flex items-start space-x-3 text-xs text-slate-700 leading-relaxed">
-                      <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-                      <p>Full extension at bottom. Drive elbows toward ribcage with controlled eccentric.</p>
-                    </div>
-                  </div>
-
-                  {/* Set Performance Table */}
-                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-2">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                      <span className="text-xs font-semibold text-slate-900">Target Sets</span>
-                      <button
-                        onClick={handleAddSet}
-                        className="text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 px-2.5 py-1 rounded-md cursor-pointer"
-                      >
-                        + Add Set
-                      </button>
-                    </div>
-
-                    <div className="flex justify-between py-1 text-[11px] font-medium text-slate-400">
-                      <span className="w-12">SET</span>
-                      <span className="w-20 text-center">REPS</span>
-                      <span className="w-24 text-center">WEIGHT</span>
-                      <span className="w-16 text-right">STATUS</span>
-                    </div>
-
-                    {gymState.activeWorkout.sets.map((s, idx) => (
-                      <div key={s.id} className="flex items-center justify-between py-2 border-b border-slate-50 text-xs">
-                        <span className="w-12 font-semibold text-slate-900">#{s.set}</span>
-                        
-                        <div className="w-20 flex items-center justify-center space-x-1">
-                          <button
-                            onClick={() => handleUpdateSetReps(idx, s.reps - 1)}
-                            className="w-5 h-5 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center"
-                          >
-                            -
-                          </button>
-                          <span className="font-medium text-slate-800">{s.reps}</span>
-                          <button
-                            onClick={() => handleUpdateSetReps(idx, s.reps + 1)}
-                            className="w-5 h-5 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center"
-                          >
-                            +
-                          </button>
-                        </div>
-
-                        <div className="w-24 text-center">
-                          <input
-                            type="text"
-                            value={s.weight}
-                            onChange={(e) => handleUpdateSetWeight(idx, e.target.value)}
-                            className="w-20 text-center py-1 rounded border border-slate-200 text-xs font-medium text-slate-700 bg-slate-50"
-                          />
-                        </div>
-
-                        <div className="w-16 flex items-center justify-end space-x-1">
-                          <button
-                            onClick={() => toggleSetCompleted(idx)}
-                            className={`px-2.5 py-1 rounded text-xs font-semibold transition cursor-pointer ${
-                              s.completed
-                                ? 'bg-slate-900 text-white'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                          >
-                            {s.completed ? 'Done' : 'Log'}
-                          </button>
-                          {gymState.activeWorkout.sets.length > 1 && (
-                            <button
-                              onClick={() => handleDeleteSet(s.id)}
-                              className="text-slate-300 hover:text-slate-600 p-1"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      handleFinishWorkout();
-                      setSelectedWorkoutForSession(null);
-                    }}
-                    className="w-full py-3 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition cursor-pointer shadow-sm"
-                  >
-                    Finish Workout
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+              <ExerciseCourseView
+                initialExerciseId={selectedWorkoutForSession.initialExerciseId || 'ex-01-pushup'}
+                workoutTitle={selectedWorkoutForSession.title}
+                onBack={() => setSelectedWorkoutForSession(null)}
+                onLogCompletedSession={(exName, sets, reps) => {
+                  setGymState((prev) => ({
+                    ...prev,
+                    streakDays: prev.streakDays + 1,
+                    completedSessions: [
+                      {
+                        id: `sess-${Date.now()}`,
+                        programId: selectedWorkoutForSession.id,
+                        programTitle: `${selectedWorkoutForSession.title} (${exName})`,
+                        startedAt: 'Today',
+                        completedAt: 'Just now',
+                        durationSeconds: selectedWorkoutForSession.durationMin * 60,
+                        setsCompleted: sets,
+                        totalSets: sets,
+                        caloriesBurned: selectedWorkoutForSession.caloriesKcal,
+                        notes: `Completed full routine: ${reps} reps across ${sets} sets.`,
+                      },
+                      ...prev.completedSessions,
+                    ],
+                    notifications: [
+                      {
+                        id: `notif-${Date.now()}`,
+                        title: `${selectedWorkoutForSession.title} Completed!`,
+                        message: `Boom! ${selectedWorkoutForSession.caloriesKcal} kcal burned. Streak is now ${prev.streakDays + 1} days.`,
+                        type: 'WORKOUT',
+                        createdAt: 'Just now',
+                        read: false,
+                        author: 'Workout Coach',
+                      },
+                      ...prev.notifications,
+                    ],
+                  }));
+                }}
+              />
+            )}
 
             {/* Attendance Tab */}
             {activeTab === 'attendance' && (
@@ -1700,23 +1433,17 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => setActiveTab('workout')}
+          onClick={() => {
+            setActiveTab('workout');
+            setSelectedWorkoutForSession(null);
+            setSelectedExerciseForWorkout(null);
+          }}
           className={`p-2 rounded-xl text-xs font-semibold flex items-center space-x-1 ${
-            activeTab === 'workout' ? 'text-slate-900 bg-slate-100' : 'text-slate-500'
+            activeTab === 'workout' ? 'text-slate-900 bg-slate-100 font-bold' : 'text-slate-500'
           }`}
         >
           <IconDumbbell className="w-4 h-4" />
           <span>Workout</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('guide')}
-          className={`p-2 rounded-xl text-xs font-semibold flex items-center space-x-1 ${
-            activeTab === 'guide' ? 'text-slate-900 bg-slate-100' : 'text-slate-500'
-          }`}
-        >
-          <IconDumbbell className="w-4 h-4 text-amber-500" />
-          <span>Guide</span>
         </button>
 
         <button
