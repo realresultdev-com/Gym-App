@@ -5,3 +5,4 @@ foreach ($f in $files) {
     Write-Host "$($f.Name): $($img.Width) x $($img.Height) ($([math]::Round($f.Length / 1MB, 2)) MB)"
     $img.Dispose()
 }
+

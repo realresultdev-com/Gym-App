@@ -197,3 +197,4 @@ $bmp.Save($outPath, [System.Drawing.Imaging.ImageFormat]::Png)
 $g.Dispose()
 $bmp.Dispose()
 Write-Output "Successfully saved: $outPath"
+
