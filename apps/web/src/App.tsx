@@ -16,6 +16,7 @@ import { MemberFeesView } from './components/MemberFeesView';
 import { AdminFeesView } from './components/AdminFeesView';
 import { ReceiptModal } from './components/ReceiptModal';
 import { ExerciseCourseView } from './components/ExerciseCourseView';
+import { WorkoutsView, type WorkoutItem } from './components/WorkoutsView';
 import {
   IconDashboard,
   IconDumbbell,
@@ -63,6 +64,7 @@ export default function App() {
 
   // Navigation & Modals
   const [activeTab, setActiveTab] = useState<'home' | 'workout' | 'attendance' | 'fees' | 'guide' | 'admin'>('home');
+  const [selectedWorkoutForSession, setSelectedWorkoutForSession] = useState<WorkoutItem | null>(null);
   const [activeReceiptRecord, setActiveReceiptRecord] = useState<FeePaymentRecord | null>(null);
   const [activeReceiptProfile, setActiveReceiptProfile] = useState<MemberFeeProfile | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -1469,8 +1471,36 @@ export default function App() {
             {/* =========================================================
                 WORKOUT TRACKER VIEW
             ========================================================== */}
-            {activeTab === 'workout' && (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {activeTab === 'workout' && !selectedWorkoutForSession && (
+              <WorkoutsView
+                onSelectWorkout={(workout) => setSelectedWorkoutForSession(workout)}
+                onOpenExerciseGuide={() => setActiveTab('guide')}
+              />
+            )}
+
+            {activeTab === 'workout' && selectedWorkoutForSession && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                  <button
+                    onClick={() => setSelectedWorkoutForSession(null)}
+                    className="flex items-center space-x-1.5 text-xs font-bold text-slate-700 hover:text-slate-900 cursor-pointer"
+                  >
+                    <span>← Back to Workouts</span>
+                  </button>
+                  <div className="flex items-center space-x-2">
+                    <span className="px-3 py-1 rounded-full bg-[#FF5A36]/10 text-[#FF5A36] text-xs font-black uppercase tracking-wider">
+                      {selectedWorkoutForSession.title}
+                    </span>
+                    <button
+                      onClick={() => setActiveTab('guide')}
+                      className="px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 cursor-pointer"
+                    >
+                      View Exercise Guide
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
                 {/* Left Side: Exercise Hero Image & Live Timer */}
                 <div className="lg:col-span-7 space-y-4">
@@ -1601,14 +1631,18 @@ export default function App() {
                   </div>
 
                   <button
-                    onClick={handleFinishWorkout}
+                    onClick={() => {
+                      handleFinishWorkout();
+                      setSelectedWorkoutForSession(null);
+                    }}
                     className="w-full py-3 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition cursor-pointer shadow-sm"
                   >
                     Finish Workout
                   </button>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
             {/* Attendance Tab */}
             {activeTab === 'attendance' && (
