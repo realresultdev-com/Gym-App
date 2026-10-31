@@ -87,10 +87,12 @@ export function PartnerOnboardingScreen({
         <SafeAreaView style={styles.headerSafeArea}>
           <View style={styles.headerRow}>
             <View style={styles.brandContainer}>
-              {/* Geometric Hexagonal Icon matching screenshot */}
-              <View style={styles.logoBadge}>
-                <MaterialCommunityIcons name="cube-scan" size={24} color="#FFFFFF" />
-              </View>
+              {/* Official 3D Real Fit Logo */}
+              <Image
+                source={require('../../assets/images/real-fit-logo.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
               <View style={styles.brandTextContainer}>
                 <Text style={styles.brandTitle}>REAL FIT</Text>
               </View>
@@ -194,19 +196,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  logoBadge: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    backgroundColor: '#0F172A',
-    alignItems: 'center',
-    justifyContent: 'center',
+  logoImage: {
+    width: 44,
+    height: 44,
     marginRight: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
   },
   brandTextContainer: {
     justifyContent: 'center',

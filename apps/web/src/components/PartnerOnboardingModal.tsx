@@ -83,11 +83,7 @@ export function PartnerOnboardingModal({
           <div className="relative flex flex-col h-[640px]">
             {/* Top Brand Header */}
             <div className="absolute top-4 left-5 z-20 flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-xl bg-slate-950 flex items-center justify-center shadow-md">
-                <svg className="w-4 h-4 text-[#FF5A36] fill-current" viewBox="0 0 24 24">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
+              <img src="/real-fit-logo.png" className="w-8 h-8 object-contain drop-shadow" alt="Real Fit" />
               <div>
                 <span className="text-slate-950 font-black tracking-widest text-sm font-sans block leading-none">
                   REAL FIT
