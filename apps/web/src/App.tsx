@@ -1426,7 +1426,7 @@ export default function App() {
                     <p className="text-xs text-slate-500 mt-1">
                       {gymState.activeCheckIn.isCheckedIn
                         ? `Current visit duration: ${formatCheckInDuration(elapsedCheckInSeconds)}`
-                        : 'Tap below to register your session at FITPULSE Studio.'}
+                        : 'Tap below to register your session at Real Fit Partner Gym.'}
                     </p>
                   </div>
 
