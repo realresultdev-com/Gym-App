@@ -678,11 +678,6 @@ export default function App() {
 
           {/* User Profile, Notifications & Role Menu */}
           <div className="flex items-center space-x-3">
-            
-            {/* Role Badge */}
-            <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/80">
-              {gymState.role === 'ADMIN' ? 'Admin' : gymState.role === 'TRAINER' ? 'Trainer' : 'Member'}
-            </span>
 
             {/* Notification Bell */}
             <button
@@ -1300,38 +1295,6 @@ export default function App() {
               <ExerciseCourseView
                 initialExerciseId={selectedExerciseForWorkout}
                 onBack={() => setSelectedExerciseForWorkout(null)}
-                onLogCompletedSession={(exName, sets, reps) => {
-                  setGymState((prev) => ({
-                    ...prev,
-                    streakDays: prev.streakDays + 1,
-                    completedSessions: [
-                      {
-                        id: `sess-${Date.now()}`,
-                        programId: 'prog-exercise-guide',
-                        programTitle: `${exName} Movement Practice`,
-                        startedAt: 'Today',
-                        completedAt: 'Just now',
-                        durationSeconds: 300,
-                        setsCompleted: sets,
-                        totalSets: sets,
-                        notes: `Form checked: ${reps} total repetitions logged.`,
-                      },
-                      ...prev.completedSessions,
-                    ],
-                    notifications: [
-                      {
-                        id: `notif-${Date.now()}`,
-                        title: 'Exercise Session Logged',
-                        message: `Great form! You completed 3 sets of ${exName}. Streak increased to ${prev.streakDays + 1} days!`,
-                        type: 'WORKOUT',
-                        createdAt: 'Just now',
-                        read: false,
-                        author: 'Exercise Coach',
-                      },
-                      ...prev.notifications,
-                    ],
-                  }));
-                }}
               />
             )}
 
@@ -1339,41 +1302,7 @@ export default function App() {
             {activeTab === 'workout' && selectedWorkoutForSession && (
               <ExerciseCourseView
                 initialExerciseId={selectedWorkoutForSession.initialExerciseId || 'ex-01-pushup'}
-                workoutTitle={selectedWorkoutForSession.title}
                 onBack={() => setSelectedWorkoutForSession(null)}
-                onLogCompletedSession={(exName, sets, reps) => {
-                  setGymState((prev) => ({
-                    ...prev,
-                    streakDays: prev.streakDays + 1,
-                    completedSessions: [
-                      {
-                        id: `sess-${Date.now()}`,
-                        programId: selectedWorkoutForSession.id,
-                        programTitle: `${selectedWorkoutForSession.title} (${exName})`,
-                        startedAt: 'Today',
-                        completedAt: 'Just now',
-                        durationSeconds: selectedWorkoutForSession.durationMin * 60,
-                        setsCompleted: sets,
-                        totalSets: sets,
-                        caloriesBurned: selectedWorkoutForSession.caloriesKcal,
-                        notes: `Completed full routine: ${reps} reps across ${sets} sets.`,
-                      },
-                      ...prev.completedSessions,
-                    ],
-                    notifications: [
-                      {
-                        id: `notif-${Date.now()}`,
-                        title: `${selectedWorkoutForSession.title} Completed!`,
-                        message: `Boom! ${selectedWorkoutForSession.caloriesKcal} kcal burned. Streak is now ${prev.streakDays + 1} days.`,
-                        type: 'WORKOUT',
-                        createdAt: 'Just now',
-                        read: false,
-                        author: 'Workout Coach',
-                      },
-                      ...prev.notifications,
-                    ],
-                  }));
-                }}
               />
             )}
 

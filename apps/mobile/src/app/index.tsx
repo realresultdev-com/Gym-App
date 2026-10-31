@@ -60,7 +60,7 @@ export default function AppMain() {
                 {selectedWorkout ? (
                   <View className="flex-1 bg-white">
                     {/* Sub-header to navigate back to Workouts list */}
-                    <View className="px-5 py-3 border-b border-slate-100 flex-row items-center justify-between bg-white">
+                    <View className="px-5 py-3 border-b border-slate-100 flex-row items-center bg-white">
                       <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => setSelectedWorkout(null)}
@@ -69,11 +69,6 @@ export default function AppMain() {
                         <Ionicons name="chevron-back" size={20} color="#0F172A" />
                         <Text className="text-slate-900 font-bold text-sm">Workouts</Text>
                       </TouchableOpacity>
-                      <View className="px-3 py-1 rounded-full bg-[#FF5A36]/10">
-                        <Text className="text-[#FF5A36] font-black text-xs uppercase tracking-wider">
-                          {selectedWorkout.title}
-                        </Text>
-                      </View>
                     </View>
                     <ExerciseTrackerView />
                   </View>

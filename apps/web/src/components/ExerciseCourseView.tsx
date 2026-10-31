@@ -3,7 +3,6 @@ import type { ExerciseGuide } from '../types/gym';
 import { FOUNDATIONAL_EXERCISES } from '../data/exerciseGuides';
 import { ExerciseGraphic } from './ExerciseGraphic';
 import {
-  IconCheckCircle,
   IconChevronLeft,
   IconChevronRight,
   IconChevronDown,
@@ -12,18 +11,14 @@ import {
 
 interface ExerciseCourseViewProps {
   initialExerciseId?: string;
-  onLogCompletedSession?: (exerciseName: string, sets: number, reps: number) => void;
   onBack?: () => void;
-  workoutTitle?: string;
 }
 
 type CategoryFilter = 'ALL' | 'Push' | 'Pull' | 'Legs & Core';
 
 export function ExerciseCourseView({
   initialExerciseId,
-  onLogCompletedSession,
   onBack,
-  workoutTitle,
 }: ExerciseCourseViewProps) {
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('ALL');
   const [selectedExercise, setSelectedExercise] = useState<ExerciseGuide>(() => {
@@ -35,9 +30,6 @@ export function ExerciseCourseView({
   });
   const [activeTab, setActiveTab] = useState<'ANIMATION' | 'STEP_1' | 'STEP_2' | 'STEP_3'>('ANIMATION');
   const [animationFrame, setAnimationFrame] = useState<'START' | 'FINISH'>('START');
-  const [feedbackToast, setFeedbackToast] = useState('');
-  const [practiceActive, setPracticeActive] = useState(false);
-  const [practiceSets, setPracticeSets] = useState(1);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -86,26 +78,11 @@ export function ExerciseCourseView({
     return () => clearInterval(interval);
   }, [activeTab, selectedExercise.id]);
 
-  const handleFinishPracticeSet = () => {
-    if (practiceSets < 3) {
-      setPracticeSets((s) => s + 1);
-      setFeedbackToast(`Set ${practiceSets} logged!`);
-    } else {
-      setPracticeActive(false);
-      setPracticeSets(1);
-      setFeedbackToast(`3 sets of ${selectedExercise.name} completed!`);
-      if (onLogCompletedSession) {
-        onLogCompletedSession(selectedExercise.name, 3, 30);
-      }
-    }
-    setTimeout(() => setFeedbackToast(''), 3000);
-  };
-
   return (
     <div className="space-y-4 antialiased">
       {/* Optional Top Return Navigation inside Workout view */}
       {onBack && (
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div className="flex items-center pb-3 border-b border-slate-200">
           <button
             onClick={onBack}
             className="flex items-center space-x-1.5 text-xs font-black text-slate-800 hover:text-slate-900 cursor-pointer bg-white px-3.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:bg-slate-50 transition"
@@ -113,19 +90,6 @@ export function ExerciseCourseView({
             <IconChevronLeft className="w-4 h-4 text-[#FF5A36]" />
             <span>← Back to Workouts</span>
           </button>
-          {workoutTitle && (
-            <span className="px-3.5 py-1 rounded-full bg-[#FF5A36]/10 text-[#FF5A36] text-xs font-black uppercase tracking-wider">
-              {workoutTitle}
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Toast Feedback */}
-      {feedbackToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-2 text-xs font-semibold animate-in slide-in-from-bottom-3 border border-slate-700">
-          <IconCheckCircle className="w-4 h-4 text-emerald-400" />
-          <span>{feedbackToast}</span>
         </div>
       )}
 
@@ -341,15 +305,6 @@ export function ExerciseCourseView({
               Step 3: Return
             </button>
           </div>
-
-          <div className="flex items-center space-x-2">
-            <span className="text-xs font-bold text-slate-900 hidden sm:inline-block">
-              {selectedExercise.name}
-            </span>
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-900">
-              {selectedExercise.recommendedSetsReps}
-            </span>
-          </div>
         </div>
 
         {/* Visual Viewport Stage */}
@@ -506,34 +461,6 @@ export function ExerciseCourseView({
 
         </div>
       </div>
-
-      {/* Clean Workout Practice Logger */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-slate-900 text-white shadow-sm flex items-center justify-between">
-        <div>
-          <h4 className="text-sm font-bold text-white">{selectedExercise.name}</h4>
-          <p className="text-xs text-slate-400">Target: {selectedExercise.recommendedSetsReps}</p>
-        </div>
-
-        {!practiceActive ? (
-          <button
-            onClick={() => setPracticeActive(true)}
-            className="px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs transition cursor-pointer shadow-md"
-          >
-            Log Practice
-          </button>
-        ) : (
-          <div className="flex items-center space-x-3">
-            <span className="text-xs font-bold text-amber-400">Set {practiceSets} / 3</span>
-            <button
-              onClick={handleFinishPracticeSet}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs transition cursor-pointer shadow-sm"
-            >
-              Complete Set {practiceSets}
-            </button>
-          </div>
-        )}
-      </div>
-
     </div>
   );
 }
