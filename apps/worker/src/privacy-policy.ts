@@ -253,3 +253,4 @@ export const PRIVACY_POLICY_HTML = `<!DOCTYPE html>
 </body>
 </html>
 `;
+

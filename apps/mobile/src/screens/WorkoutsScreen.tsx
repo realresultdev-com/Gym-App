@@ -68,9 +68,10 @@ export const CORE_EXERCISES = [
 
 interface WorkoutsScreenProps {
   onSelectWorkout?: (workout: WorkoutItem) => void;
+  onOpenPartnerOnboarding?: () => void;
 }
 
-export function WorkoutsScreen({ onSelectWorkout }: WorkoutsScreenProps) {
+export function WorkoutsScreen({ onSelectWorkout, onOpenPartnerOnboarding }: WorkoutsScreenProps) {
   const [activeCategory, setActiveCategory] = useState<'ALL' | 'STRENGTH' | 'HIIT' | 'MOBILITY'>('ALL');
 
   const filteredWorkouts = activeCategory === 'ALL'
@@ -237,6 +238,30 @@ export function WorkoutsScreen({ onSelectWorkout }: WorkoutsScreenProps) {
             ))}
           </View>
         </View>
+
+        {/* Real Fit Partner Network Banner (Matches Onboarding Mockup) */}
+        {onOpenPartnerOnboarding && (
+          <TouchableOpacity
+            activeOpacity={0.88}
+            onPress={onOpenPartnerOnboarding}
+            className="mx-5 mt-8 p-5 rounded-3xl bg-slate-950 shadow-lg shadow-black/20"
+          >
+            <View className="flex-row items-center justify-between mb-2">
+              <View className="px-2.5 py-0.5 rounded-full bg-[#FF5A36]">
+                <Text className="text-white text-[10px] font-black uppercase tracking-wider">
+                  Gym Owners & Partners
+                </Text>
+              </View>
+              <Text className="text-[#FF5A36] text-xs font-bold">Explore Platform →</Text>
+            </View>
+            <Text className="text-white text-lg font-black tracking-tight mb-1">
+              Run Your Gym. Smarter.
+            </Text>
+            <Text className="text-slate-400 text-xs leading-relaxed">
+              Automate member check-ins, instant bank payouts & bundle free exercise courses for all members.
+            </Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );

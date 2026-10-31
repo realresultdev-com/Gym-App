@@ -6,14 +6,18 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
+  StyleSheet,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface PartnerOnboardingScreenProps {
   onContinue: () => void;
   onSwitchToMember?: () => void;
 }
+
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const SLIDES = [
   {
@@ -56,106 +60,275 @@ export function PartnerOnboardingScreen({
   const slide = SLIDES[currentSlideIndex];
 
   return (
-    <View className="flex-1 bg-white">
-      {/* Gym Photo Hero - Exact layout from Fit Square screenshot */}
-      <View className="flex-1 w-full relative">
+    <View style={styles.container}>
+      <StatusBar style="dark" />
+
+      {/* TOP HERO IMAGE (Takes ~56% of screen) */}
+      <View style={styles.heroImageContainer}>
         <Image
           source={require('../../assets/partner-gym.jpg')}
-          className="w-full h-full"
+          style={styles.heroImage}
           resizeMode="cover"
         />
 
-        {/* Gradient overlay to smoothly transition to white content below */}
+        {/* Smooth Gradient Fade from image bottom to solid pure white */}
         <LinearGradient
-          colors={['rgba(255,255,255,0.85)', 'rgba(255,255,255,0.0)', 'rgba(255,255,255,0.95)', '#FFFFFF']}
-          locations={[0, 0.25, 0.75, 1]}
-          className="absolute inset-0"
+          colors={[
+            'rgba(255, 255, 255, 0.4)',
+            'rgba(255, 255, 255, 0.0)',
+            'rgba(255, 255, 255, 0.65)',
+            '#FFFFFF',
+          ]}
+          locations={[0, 0.25, 0.72, 1]}
+          style={StyleSheet.absoluteFill}
         />
 
-        {/* Top Header Logo: Hexagon Icon + FIT SQUARE */}
-        <SafeAreaView className="absolute top-2 left-6 right-6">
-          <View className="flex-row items-center justify-between pt-2">
-            <View className="flex-row items-center space-x-2.5 gap-2.5">
-              {/* Hexagonal Brand Symbol */}
-              <View className="w-9 h-9 rounded-xl bg-slate-950 items-center justify-center shadow-md">
-                <MaterialCommunityIcons name="cube-scan" size={22} color="#FF5A36" />
+        {/* TOP BRAND HEADER (Logo + Brand Name) */}
+        <SafeAreaView style={styles.headerSafeArea}>
+          <View style={styles.headerRow}>
+            <View style={styles.brandContainer}>
+              {/* Geometric Hexagonal Icon matching screenshot */}
+              <View style={styles.logoBadge}>
+                <MaterialCommunityIcons name="cube-scan" size={24} color="#FFFFFF" />
               </View>
-              <View>
-                <Text className="text-slate-950 text-base font-black tracking-widest font-sans">
-                  REAL FIT
-                </Text>
-                <Text className="text-slate-400 text-[9px] font-bold tracking-widest uppercase">
-                  PARTNER PLATFORM
-                </Text>
+              <View style={styles.brandTextContainer}>
+                <Text style={styles.brandTitle}>REAL FIT</Text>
               </View>
             </View>
 
+            {/* Optional switch for easy preview */}
             {onSwitchToMember && (
               <TouchableOpacity
                 onPress={onSwitchToMember}
                 activeOpacity={0.7}
-                className="px-3 py-1 rounded-full bg-black/5 border border-black/10"
+                style={styles.modeSwitchBtn}
               >
-                <Text className="text-slate-700 font-bold text-xs">Member Mode</Text>
+                <Text style={styles.modeSwitchText}>Workouts</Text>
               </TouchableOpacity>
             )}
           </View>
         </SafeAreaView>
+      </View>
 
-        {/* Floating Content Area (Bottom Section Matching Screenshot) */}
-        <View className="absolute bottom-6 left-6 right-6">
-          {/* Partner Tag Badge */}
-          <Text className="text-[#FF5A36] text-xs font-black uppercase tracking-wider mb-2">
-            {slide.tag}
-          </Text>
+      {/* BOTTOM CONTENT AREA (Pure Crisp White) */}
+      <View style={styles.bottomContent}>
+        {/* Category Tag */}
+        <Text style={styles.tagText}>{slide.tag}</Text>
 
-          {/* Headline with Brush Highlight */}
-          <View className="mb-3">
-            <Text className="text-slate-950 text-4xl font-black tracking-tight leading-tight">
-              {slide.titleLine1}
-            </Text>
-            <View className="relative inline-flex">
-              <Text className="text-slate-950 text-4xl font-black tracking-tight leading-tight">
-                {slide.titleLine2}
-              </Text>
-              {/* Stylish Orange Underline Accent matching screenshot */}
-              <View className="h-1.5 w-36 bg-[#FF5A36] rounded-full mt-0.5 opacity-90" />
-            </View>
+        {/* Headline */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>{slide.titleLine1}</Text>
+          <View style={styles.titleRow}>
+            <Text style={styles.titleText}>{slide.titleLine2}</Text>
           </View>
-
-          {/* Description Paragraph */}
-          <Text className="text-slate-600 text-sm font-medium leading-relaxed mb-6">
-            {slide.description}
-          </Text>
-
-          {/* Carousel Dots */}
-          <View className="flex-row items-center space-x-2 gap-2 mb-6">
-            {SLIDES.map((_, idx) => (
-              <TouchableOpacity
-                key={idx}
-                onPress={() => setCurrentSlideIndex(idx)}
-                className={`h-2.5 rounded-full transition-all ${
-                  currentSlideIndex === idx
-                    ? 'w-7 bg-slate-950'
-                    : 'w-2.5 bg-slate-300'
-                }`}
-              />
-            ))}
+          {/* Hand-drawn style brush underline accent under "Smarter." */}
+          <View style={styles.brushUnderline}>
+            <View style={styles.brushMain} />
+            <View style={styles.brushSecondary} />
           </View>
-
-          {/* Big Orange Continue Button */}
-          <TouchableOpacity
-            activeOpacity={0.88}
-            onPress={handleNext}
-            className="w-full py-4 rounded-2xl bg-[#FF5A36] items-center justify-center shadow-lg shadow-[#FF5A36]/30 mb-2"
-          >
-            <Text className="text-white font-black text-base tracking-wide">
-              {currentSlideIndex === SLIDES.length - 1 ? 'Launch Partner Dashboard' : 'Continue'}
-            </Text>
-          </TouchableOpacity>
         </View>
+
+        {/* Description */}
+        <Text style={styles.descriptionText}>{slide.description}</Text>
+
+        {/* Centered Pagination Dots */}
+        <View style={styles.paginationRow}>
+          {SLIDES.map((_, idx) => (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => setCurrentSlideIndex(idx)}
+              activeOpacity={0.7}
+              style={[
+                styles.dot,
+                currentSlideIndex === idx ? styles.activeDot : styles.inactiveDot,
+              ]}
+            />
+          ))}
+        </View>
+
+        {/* Big Orange Continue Button (Full Pill) */}
+        <TouchableOpacity
+          activeOpacity={0.88}
+          onPress={handleNext}
+          style={styles.continueButton}
+        >
+          <Text style={styles.continueButtonText}>
+            {currentSlideIndex === SLIDES.length - 1 ? 'Get Started' : 'Continue'}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  heroImageContainer: {
+    width: '100%',
+    height: SCREEN_HEIGHT * 0.55,
+    position: 'relative',
+    backgroundColor: '#F8FAFC',
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  headerSafeArea: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingTop: 12,
+  },
+  brandContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoBadge: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#0F172A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  brandTextContainer: {
+    justifyContent: 'center',
+  },
+  brandTitle: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#0F172A',
+    letterSpacing: 1.5,
+    fontFamily: 'System',
+  },
+  modeSwitchBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 20,
+    backgroundColor: 'rgba(15, 23, 42, 0.08)',
+  },
+  modeSwitchText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  bottomContent: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 28,
+    justifyContent: 'space-between',
+    paddingBottom: 36,
+    paddingTop: 8,
+  },
+  tagText: {
+    color: '#FF5A36',
+    fontSize: 13,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  titleContainer: {
+    marginBottom: 8,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 34,
+    fontWeight: '900',
+    color: '#0F172A',
+    lineHeight: 40,
+    letterSpacing: -0.5,
+    fontFamily: 'System',
+  },
+  brushUnderline: {
+    position: 'relative',
+    marginTop: 3,
+    width: 140,
+    height: 6,
+  },
+  brushMain: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: 130,
+    height: 4,
+    backgroundColor: '#FF5A36',
+    borderRadius: 4,
+    transform: [{ rotate: '-1.5deg' }],
+  },
+  brushSecondary: {
+    position: 'absolute',
+    left: 8,
+    top: 2,
+    width: 115,
+    height: 3,
+    backgroundColor: '#FF8A65',
+    borderRadius: 4,
+    opacity: 0.8,
+  },
+  descriptionText: {
+    fontSize: 14.5,
+    fontWeight: '500',
+    color: '#64748B',
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  paginationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 14,
+    gap: 8,
+  },
+  dot: {
+    height: 8,
+    borderRadius: 4,
+  },
+  activeDot: {
+    width: 8,
+    backgroundColor: '#0F172A',
+  },
+  inactiveDot: {
+    width: 8,
+    backgroundColor: '#CBD5E1',
+  },
+  continueButton: {
+    width: '100%',
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FF5A36',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#FF5A36',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  continueButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+});

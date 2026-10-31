@@ -89,6 +89,7 @@ export default function AppMain() {
                 ) : (
                   <WorkoutsScreen
                     onSelectWorkout={(workout) => setSelectedWorkout(workout)}
+                    onOpenPartnerOnboarding={() => setShowPartnerWelcome(true)}
                   />
                 )}
               </View>
@@ -390,6 +391,7 @@ export default function AppMain() {
       <RoleSwitcherModal
         visible={roleModalVisible}
         onClose={() => setRoleModalVisible(false)}
+        onOpenPartnerOnboarding={() => setShowPartnerWelcome(true)}
       />
     </SafeAreaView>
   );

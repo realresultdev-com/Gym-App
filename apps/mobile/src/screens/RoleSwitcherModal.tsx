@@ -6,9 +6,10 @@ import type { UserRole } from '@gym-app/shared-types';
 interface RoleSwitcherModalProps {
   visible: boolean;
   onClose: () => void;
+  onOpenPartnerOnboarding?: () => void;
 }
 
-export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) {
+export function RoleSwitcherModal({ visible, onClose, onOpenPartnerOnboarding }: RoleSwitcherModalProps) {
   const { role, switchDemoRole, login, isLoading, error } = useAuthStore();
   const [showManualLogin, setShowManualLogin] = useState(false);
   const [email, setEmail] = useState('');
@@ -120,6 +121,24 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
                   Sign In with Custom Email & Password
                 </Text>
               </TouchableOpacity>
+
+              {onOpenPartnerOnboarding && (
+                <TouchableOpacity
+                  onPress={() => {
+                    onClose();
+                    onOpenPartnerOnboarding();
+                  }}
+                  className="py-3 px-4 rounded-2xl bg-[#FF5A36]/10 border border-[#FF5A36]/30 flex-row items-center justify-between"
+                >
+                  <View className="flex-row items-center space-x-2 gap-2">
+                    <Text className="text-base">🏢</Text>
+                    <Text className="text-[#FF5A36] text-xs font-black">
+                      View "Run Your Gym. Smarter." Screen
+                    </Text>
+                  </View>
+                  <Text className="text-[#FF5A36] text-xs font-bold">→</Text>
+                </TouchableOpacity>
+              )}
             </View>
           ) : (
             <View className="space-y-3 gap-3 mb-4">
