@@ -10,6 +10,8 @@
     "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,green\" \"npm run worker:dev\" \"npm run web:dev\"",
     "web:dev": "npm run dev --workspace=@gym-app/web",
     "web:build": "npm run build --workspace=@gym-app/web",
+    "build:android": "cd apps/web && npm run build && npx cap sync android && cd android && gradlew.bat assembleRelease bundleRelease && copy /y app\\build\\outputs\\bundle\\release\\app-release.aab ..\\..\\RealFit-release.aab && copy /y app\\build\\outputs\\apk\\release\\app-release.apk ..\\..\\RealFit-release.apk",
+    "run:android": "cd apps/web && npm run build && npx cap sync android && npx cap run android",
     "android:bundle": "npm run playstore:build --workspace=@gym-app/web",
     "worker:dev": "npm run dev --workspace=@gym-app/worker",
     "worker:deploy": "npm run deploy --workspace=@gym-app/worker",
