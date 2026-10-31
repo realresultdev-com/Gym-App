@@ -5,6 +5,8 @@ import type { AppContext } from './types/env';
 import { errorHandler } from './middleware/error-handler';
 import { rateLimiter } from './middleware/rate-limit';
 
+import { PRIVACY_POLICY_HTML } from './privacy-policy';
+
 // Routes
 import { authRoutes } from './modules/auth/auth.routes';
 import { adminRoutes } from './modules/admin/admin.routes';
@@ -132,6 +134,14 @@ export function createApp() {
       serverless: true,
       free_tier_optimized: true,
     });
+  });
+
+  // Google Play Console Compliant Privacy Policy
+  app.get('/privacy', (c) => {
+    return c.html(PRIVACY_POLICY_HTML);
+  });
+  app.get('/privacy.html', (c) => {
+    return c.html(PRIVACY_POLICY_HTML);
   });
 
   // API Modules
