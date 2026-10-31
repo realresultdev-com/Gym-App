@@ -276,3 +276,4 @@ Write-Output "Generated Onboarding Screenshot: $scrOut"
 
 # Cleanup
 $logoImg.Dispose()
+
