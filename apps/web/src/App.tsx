@@ -48,7 +48,15 @@ export default function App() {
         user,
       },
     }));
-    setActiveTab('home');
+
+    // MNC-Level Role-Based Smart Navigation Redirect:
+    if (role === 'ADMIN') {
+      setActiveTab('admin'); // Directs to Gym Partner / Owner Portal
+    } else if (role === 'TRAINER') {
+      setActiveTab('home'); // Directs to Trainer dashboard
+    } else {
+      setActiveTab('workout'); // Directs to Member Workout Library & Exercise Guide
+    }
   };
 
   const handleSignOut = () => {

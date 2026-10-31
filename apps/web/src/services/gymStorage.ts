@@ -382,14 +382,8 @@ export function loadGymState(): GymAppState {
       const parsed = JSON.parse(raw);
       return {
         auth: parsed.auth || {
-          isAuthenticated: true,
-          user: {
-            id: 'usr-member-0001',
-            name: 'Martin Vance',
-            email: 'member@gym.com',
-            role: parsed.role || 'MEMBER',
-            avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
-          },
+          isAuthenticated: false,
+          user: null,
         },
         role: parsed.role || 'MEMBER',
         activeCheckIn: parsed.activeCheckIn || {
@@ -423,14 +417,8 @@ export function loadGymState(): GymAppState {
 
   return {
     auth: {
-      isAuthenticated: true,
-      user: {
-        id: 'usr-member-0001',
-        name: 'Martin Vance',
-        email: 'member@gym.com',
-        role: 'MEMBER',
-        avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
-      },
+      isAuthenticated: false,
+      user: null,
     },
     role: 'MEMBER',
     activeCheckIn: {
