@@ -7,18 +7,32 @@ import { WorkoutsScreen, type WorkoutItem } from '../screens/WorkoutsScreen';
 import { ExerciseTrackerView } from '../components/ExerciseTrackerView';
 import { AdminDashboardView } from '../components/AdminDashboardView';
 import { TrainerDashboardView } from '../components/TrainerDashboardView';
+import { PartnerOnboardingScreen } from '../screens/PartnerOnboardingScreen';
 import { RoleSwitcherModal } from '../screens/RoleSwitcherModal';
 import { Header } from '../components/Header';
 
 export default function AppMain() {
-  const { role, initAuth } = useAuthStore();
+  const { role, initAuth, switchDemoRole } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'today' | 'workout' | 'progress' | 'history' | 'profile'>('workout');
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutItem | null>(null);
   const [roleModalVisible, setRoleModalVisible] = useState(false);
+  const [showPartnerWelcome, setShowPartnerWelcome] = useState(false);
 
   useEffect(() => {
     initAuth();
   }, []);
+
+  if (showPartnerWelcome) {
+    return (
+      <PartnerOnboardingScreen
+        onContinue={() => {
+          setShowPartnerWelcome(false);
+          switchDemoRole('ADMIN');
+        }}
+        onSwitchToMember={() => setShowPartnerWelcome(false)}
+      />
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -221,6 +235,33 @@ export default function AppMain() {
                       </Text>
                     </TouchableOpacity>
                   </View>
+
+                  {/* FitSquare Partner Showcase for Gym Owners */}
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => setShowPartnerWelcome(true)}
+                    className="mt-4 bg-slate-950 rounded-3xl p-5 border border-slate-800 shadow-md"
+                  >
+                    <View className="flex-row items-center justify-between mb-2">
+                      <Text className="text-[#FF5A36] text-[10px] font-black uppercase tracking-wider">
+                        PARTNER WITH FIT SQUARE!
+                      </Text>
+                      <View className="px-2.5 py-0.5 rounded-full bg-[#FF5A36]/20">
+                        <Text className="text-[#FF5A36] text-[10px] font-black">Gym Owners</Text>
+                      </View>
+                    </View>
+                    <Text className="text-white text-lg font-black">
+                      Run Your Gym. Smarter.
+                    </Text>
+                    <Text className="text-slate-400 text-xs font-medium mt-1 leading-relaxed">
+                      Manage members, track live QR check-ins, withdraw bank payouts, and offer bundled free exercise courses to every member.
+                    </Text>
+                    <View className="mt-4 py-3 rounded-2xl bg-[#FF5A36] items-center justify-center shadow-md shadow-[#FF5A36]/30">
+                      <Text className="text-white font-black text-xs uppercase tracking-wider">
+                        Explore Gym Owner Platform
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               </ScrollView>
             )}

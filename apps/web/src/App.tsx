@@ -16,6 +16,7 @@ import { AdminFeesView } from './components/AdminFeesView';
 import { ReceiptModal } from './components/ReceiptModal';
 import { ExerciseCourseView } from './components/ExerciseCourseView';
 import { WorkoutsView, type WorkoutItem } from './components/WorkoutsView';
+import { PartnerOnboardingModal } from './components/PartnerOnboardingModal';
 import {
   IconDashboard,
   IconDumbbell,
@@ -72,6 +73,7 @@ export default function App() {
   const [broadcastModalOpen, setBroadcastModalOpen] = useState(false);
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [attendanceHistoryOpen, setAttendanceHistoryOpen] = useState(false);
+  const [partnerModalOpen, setPartnerModalOpen] = useState(false);
 
   // -------------------------------------------------------------
   // Fee Payments & Billing Management
@@ -678,6 +680,14 @@ export default function App() {
 
           {/* User Profile, Notifications & Role Menu */}
           <div className="flex items-center space-x-3">
+            {/* FitSquare Partner With Us Button */}
+            <button
+              onClick={() => setPartnerModalOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-[#FF5A36] text-white text-xs font-black hover:bg-[#e04825] transition cursor-pointer flex items-center space-x-1.5 shadow-sm active:scale-95"
+            >
+              <span className="text-xs">🏢</span>
+              <span>Partner With Us</span>
+            </button>
 
             {/* Notification Bell */}
             <button
@@ -751,7 +761,89 @@ export default function App() {
             />
           ) : (
             <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              {/* FitSquare Partner Status Banner */}
+              <div className="p-6 rounded-3xl bg-slate-950 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center space-x-2.5 mb-1.5">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#FF5A36] text-white text-[10px] font-black uppercase tracking-wider">
+                      FitSquare Verified Partner
+                    </span>
+                    <span className="text-white/60 text-xs font-semibold">
+                      ID: FS-BLR-0042 • Elite Tier
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-black tracking-tight text-white">
+                    FitPulse Elite Athletic Studio
+                  </h2>
+                  <p className="text-xs text-white/60 mt-0.5">
+                    Indiranagar 100ft Rd, Bengaluru • Hours: 06:00 AM – 10:00 PM • ₹0 Platform Listing Fees
+                  </p>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setPartnerModalOpen(true)}
+                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition border border-white/15 cursor-pointer"
+                  >
+                    Partner Info & Onboarding
+                  </button>
+                  <span className="px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/40 text-xs font-black">
+                    ● STUDIO OPEN
+                  </span>
+                </div>
+              </div>
+
+              {/* Bundled Member Perk: Free Exercise Course */}
+              <div className="p-5 rounded-3xl bg-[#FFF6F4] border border-[#FF5A36]/30 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 text-[#FF5A36] text-[11px] font-black uppercase tracking-wider mb-1">
+                    <span>🎁 BUNDLED MEMBER VALUE ADD</span>
+                  </div>
+                  <h3 className="text-lg font-black text-slate-900">
+                    Free 10-Exercise Foundational Movement Course Included
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed mt-0.5">
+                    All {activeMembersCount} registered gym members get built-in step-by-step Push-Up, Shoulder Press, Lat Pulldown, Squats & Plank motion animations. Saves your trainers repetitive instruction and boosts member retention!
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setGymState((prev) => ({ ...prev, role: 'MEMBER' }));
+                    setActiveTab('workout');
+                    setSelectedWorkoutForSession(null);
+                    setSelectedExerciseForWorkout(null);
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-[#FF5A36] hover:bg-[#e04825] text-white text-xs font-black uppercase tracking-wider transition shrink-0 cursor-pointer shadow-md shadow-[#FF5A36]/25"
+                >
+                  Preview Member Course →
+                </button>
+              </div>
+
+              {/* FitSquare Partner Settlement & Bank Payouts */}
+              <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center space-x-2 text-slate-400 text-xs font-black uppercase tracking-wider mb-1">
+                    <span>Partner Settlement & Bank Payouts</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">Instant UPI/IMPS</span>
+                  </div>
+                  <div className="flex items-baseline space-x-3">
+                    <span className="text-3xl font-black text-slate-950 font-number">₹48,250</span>
+                    <span className="text-xs text-slate-500 font-medium">Available to withdraw (86 verified check-ins)</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Linked Account: <strong>HDFC Bank •••• 4921</strong> (IFSC: HDFC0001245) • Zero transaction deductions
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => alert('Withdrawal initiated! ₹48,250 will be credited to HDFC Bank ****4921 within 2 hours.')}
+                  className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider transition shadow-md cursor-pointer shrink-0"
+                >
+                  Withdraw to Bank
+                </button>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Studio Operations</h2>
                   <p className="text-xs text-slate-500 mt-0.5">Membership analytics, access control, and roster</p>
@@ -1803,6 +1895,18 @@ export default function App() {
           }}
         />
       )}
+
+      {/* =========================================================
+          FITSQUARE PARTNER ONBOARDING MODAL
+      ========================================================== */}
+      <PartnerOnboardingModal
+        isOpen={partnerModalOpen}
+        onClose={() => setPartnerModalOpen(false)}
+        onLaunchPartnerDashboard={() => {
+          setGymState((prev) => ({ ...prev, role: 'ADMIN' }));
+          setActiveTab('admin');
+        }}
+      />
 
     </div>
   );

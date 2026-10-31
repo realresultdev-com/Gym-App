@@ -28,7 +28,7 @@ const PRESET_ACCOUNTS = [
     name: 'Sarah Connor',
     email: 'admin@gym.com',
     password: 'Password123!',
-    tag: 'Admin',
+    tag: 'FitSquare Partner (Gym Owner)',
     avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200',
   },
 ];

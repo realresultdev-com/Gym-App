@@ -100,13 +100,13 @@ export function RoleSwitcherModal({ visible, onClose }: RoleSwitcherModalProps) 
                     : 'bg-slate-50 border-slate-200'
                 }`}
               >
-                <Text className="text-2xl">👑</Text>
+                <Text className="text-2xl">🏢</Text>
                 <View className="flex-1">
                   <Text className={`text-sm font-black ${role === 'ADMIN' ? 'text-white' : 'text-slate-900'}`}>
-                    Sarah Connor (Admin)
+                    FitSquare Partner / Gym Owner
                   </Text>
                   <Text className={`text-xs ${role === 'ADMIN' ? 'text-slate-300' : 'text-slate-500'}`}>
-                    Revenue, Cloudflare Free-Tier monitor, members & reception QR
+                    Run your gym smarter: live footfall, instant bank payouts & bundled free exercise course
                   </Text>
                 </View>
                 {role === 'ADMIN' && <Text className="text-amber-400 font-black text-sm">✓</Text>}

@@ -1,148 +1,223 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
-import { ApiClient } from '../services/api';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-export function AdminDashboardView() {
-  const [metrics, setMetrics] = useState({
-    total_members: 120,
-    active_subscriptions: 98,
-    today_checkins: 42,
-    monthly_revenue: 8450,
-  });
-  const [usage, setUsage] = useState<any>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+interface AdminDashboardViewProps {
+  onPreviewExerciseCourse?: () => void;
+}
 
-  const loadData = async () => {
-    setIsRefreshing(true);
-    const [mRes, uRes] = await Promise.all([
-      ApiClient.get('/api/admin/metrics'),
-      ApiClient.get('/api/admin/usage'),
-    ]);
-    if (mRes.success && mRes.data) setMetrics(mRes.data);
-    if (uRes.success && uRes.data) setUsage(uRes.data);
-    setIsRefreshing(false);
+export function AdminDashboardView({ onPreviewExerciseCourse }: AdminDashboardViewProps) {
+  const [partnerBalance, setPartnerBalance] = useState(48250);
+  const [todayCheckIns, setTodayCheckIns] = useState(86);
+  const [isGymOpen, setIsGymOpen] = useState(true);
+
+  const handleWithdraw = () => {
+    Alert.alert(
+      'Instant Bank Payout',
+      `Request withdrawal of ₹${partnerBalance.toLocaleString()} to HDFC Bank (A/C: ••••4921)?\nFunds typically deposit within 2 hours.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Withdraw Now',
+          onPress: () => {
+            Alert.alert('Payout Initiated! 🚀', `₹${partnerBalance.toLocaleString()} is on its way to your verified bank account.`);
+            setPartnerBalance(0);
+          },
+        },
+      ]
+    );
   };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   return (
     <ScrollView
-      className="flex-1 bg-white px-5 pt-3 pb-8"
-      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={loadData} />}
+      className="flex-1 bg-[#FBFBFC] px-5 pt-3 pb-12"
       showsVerticalScrollIndicator={false}
     >
-      <View className="mb-4">
-        <Text className="text-slate-900 text-2xl font-black">Admin Command Center</Text>
-        <Text className="text-slate-500 text-xs font-semibold">Cloudflare Serverless Management</Text>
-      </View>
-
-      {/* Metric Cards Grid */}
-      <View className="flex-row flex-wrap justify-between mb-4">
-        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm mb-3">
-          <Text className="text-slate-500 text-xs font-bold">Active Members</Text>
-          <Text className="text-slate-900 text-2xl font-black mt-1">{metrics.total_members}</Text>
-          <Text className="text-emerald-600 text-[11px] font-bold mt-1">↑ 14% this month</Text>
-        </View>
-
-        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm mb-3">
-          <Text className="text-slate-500 text-xs font-bold">Active Subscriptions</Text>
-          <Text className="text-slate-900 text-2xl font-black mt-1">{metrics.active_subscriptions}</Text>
-          <Text className="text-emerald-600 text-[11px] font-bold mt-1">98% Retention</Text>
-        </View>
-
-        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
-          <Text className="text-slate-500 text-xs font-bold">Today Check-Ins</Text>
-          <Text className="text-slate-900 text-2xl font-black mt-1">{metrics.today_checkins}</Text>
-          <Text className="text-slate-500 text-[11px] font-semibold mt-1">Peak: 18:00 - 20:00</Text>
-        </View>
-
-        <View className="w-[48%] bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
-          <Text className="text-slate-500 text-xs font-bold">Monthly Revenue</Text>
-          <Text className="text-slate-900 text-2xl font-black mt-1">${metrics.monthly_revenue}</Text>
-          <Text className="text-slate-500 text-[11px] font-semibold mt-1">All-Access & Pro</Text>
-        </View>
-      </View>
-
-      {/* Cloudflare Free Tier Optimization Card */}
-      <View className="bg-slate-50 rounded-3xl p-5 border border-slate-200 shadow-sm mb-5">
-        <View className="flex-row items-center justify-between mb-2">
+      {/* FitSquare Partner Status Banner */}
+      <View className="bg-slate-950 rounded-3xl p-5 mb-5 shadow-sm">
+        <View className="flex-row items-center justify-between mb-3">
           <View className="flex-row items-center space-x-2 gap-2">
-            <Text className="text-base">⚡</Text>
-            <Text className="text-slate-900 text-sm font-black">Cloudflare Free-Tier Health</Text>
+            <View className="w-8 h-8 rounded-lg bg-[#FF5A36] items-center justify-center">
+              <MaterialCommunityIcons name="shield-check" size={18} color="#FFFFFF" />
+            </View>
+            <View>
+              <Text className="text-white font-black text-sm tracking-wide">
+                FIT SQUARE PARTNER
+              </Text>
+              <Text className="text-white/60 text-[10px] font-semibold">
+                ID: FS-BLR-0042 • Elite Tier
+              </Text>
+            </View>
           </View>
-          <View className="bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
-            <Text className="text-emerald-800 text-[10px] font-bold">100% Free Tier</Text>
+
+          {/* Live Open/Closed Toggle */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setIsGymOpen(!isGymOpen)}
+            className={`px-3 py-1 rounded-full ${
+              isGymOpen ? 'bg-emerald-500/20 border border-emerald-400' : 'bg-rose-500/20 border border-rose-400'
+            }`}
+          >
+            <Text className={`text-[11px] font-black ${isGymOpen ? 'text-emerald-400' : 'text-rose-400'}`}>
+              {isGymOpen ? '● STUDIO OPEN' : '○ TEMPORARY CLOSED'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text className="text-white/90 text-xl font-black">
+          FitPulse Elite Athletic Studio
+        </Text>
+        <Text className="text-white/60 text-xs font-medium mt-0.5">
+          Indiranagar 100ft Rd, Bengaluru • Hours: 06:00 AM – 10:00 PM
+        </Text>
+      </View>
+
+      {/* Free Exercise Course Value Add for Gym Owners */}
+      <View className="bg-[#FFF6F4] border border-[#FF5A36]/30 rounded-3xl p-5 mb-5 shadow-xs">
+        <View className="flex-row items-start justify-between">
+          <View className="flex-1 mr-3">
+            <View className="flex-row items-center space-x-1.5 gap-1.5 mb-1">
+              <Text className="text-[11px] font-black text-[#FF5A36] uppercase tracking-wider">
+                🎁 Free Course Included With Management
+              </Text>
+            </View>
+            <Text className="text-slate-900 font-black text-base">
+              10 Foundational Movement Guides
+            </Text>
+            <Text className="text-slate-600 text-xs font-medium leading-relaxed mt-1">
+              All 142 of your registered gym members receive our step-by-step Push-Up, Shoulder Press, Lat Pulldown & Plank animated courses completely free.
+            </Text>
+          </View>
+          <View className="w-12 h-12 rounded-2xl bg-[#FF5A36] items-center justify-center shrink-0 shadow-md shadow-[#FF5A36]/30">
+            <MaterialCommunityIcons name="dumbbell" size={24} color="#FFFFFF" />
           </View>
         </View>
 
-        <Text className="text-slate-600 text-xs mb-3 font-medium">
-          Edge compute executes on Cloudflare Workers. Relational data is indexed in D1 SQLite with KV caching.
+        {onPreviewExerciseCourse && (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={onPreviewExerciseCourse}
+            className="mt-3 py-2.5 px-4 rounded-xl bg-[#FF5A36] flex-row items-center justify-center space-x-1.5 gap-1.5"
+          >
+            <Text className="text-white font-black text-xs uppercase tracking-wider">
+              Preview Exercise Course
+            </Text>
+            <Ionicons name="arrow-forward" size={14} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* FitSquare Partner Payouts & Earnings Card */}
+      <View className="bg-white rounded-3xl p-5 border border-slate-100 shadow-2xs mb-5">
+        <View className="flex-row items-center justify-between mb-3">
+          <Text className="text-slate-400 text-xs font-black uppercase tracking-wider">
+            Partner Payout Balance
+          </Text>
+          <View className="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
+            <Text className="text-emerald-700 text-[10px] font-black">₹0 Platform Fees</Text>
+          </View>
+        </View>
+
+        <Text className="text-slate-900 text-3xl font-black">
+          ₹{partnerBalance.toLocaleString()}
+        </Text>
+        <Text className="text-slate-400 text-xs font-medium mt-1">
+          Settlement linked to HDFC Bank (A/C ••••4921)
         </Text>
 
-        <View className="space-y-2.5 gap-2.5">
-          <View>
-            <View className="flex-row justify-between text-xs mb-1">
-              <Text className="text-slate-500 text-xs font-semibold">Workers Daily Requests</Text>
-              <Text className="text-slate-800 text-xs font-mono font-bold">&lt; 1% of 100,000</Text>
-            </View>
-            <View className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-              <View className="h-full bg-slate-900 rounded-full w-[2%]" />
-            </View>
-          </View>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={handleWithdraw}
+          disabled={partnerBalance === 0}
+          className={`mt-4 py-3.5 rounded-2xl items-center justify-center shadow-md ${
+            partnerBalance > 0
+              ? 'bg-[#FF5A36] shadow-[#FF5A36]/25'
+              : 'bg-slate-200 shadow-none'
+          }`}
+        >
+          <Text className="text-white font-black text-xs uppercase tracking-wider">
+            {partnerBalance > 0 ? 'Withdraw to Bank Account' : 'Funds Withdrawn (Up to Date)'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-          <View>
-            <View className="flex-row justify-between text-xs mb-1">
-              <Text className="text-slate-500 text-xs font-semibold">D1 SQLite Storage</Text>
-              <Text className="text-slate-800 text-xs font-mono font-bold">&lt; 1MB of 500MB</Text>
-            </View>
-            <View className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-              <View className="h-full bg-indigo-600 rounded-full w-[1%]" />
-            </View>
+      {/* Key Real-Time Facility Metrics */}
+      <Text className="text-slate-900 font-black text-lg mb-3">Live Studio Operations</Text>
+      <View className="flex-row space-x-3 gap-3 mb-5">
+        {/* Footfall */}
+        <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-slate-400 text-[11px] font-black uppercase">Live Footfall</Text>
+            <View className="w-2 h-2 rounded-full bg-emerald-500" />
           </View>
+          <Text className="text-slate-900 text-2xl font-black mt-2">26</Text>
+          <Text className="text-emerald-600 text-[11px] font-bold mt-1">Inside Studio</Text>
+        </View>
+
+        {/* Today's QR Check-Ins */}
+        <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
+          <Text className="text-slate-400 text-[11px] font-black uppercase">QR Check-Ins</Text>
+          <Text className="text-slate-900 text-2xl font-black mt-2">{todayCheckIns}</Text>
+          <Text className="text-slate-500 text-[11px] font-bold mt-1">Today's Visits</Text>
+        </View>
+
+        {/* Active Members */}
+        <View className="flex-1 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
+          <Text className="text-slate-400 text-[11px] font-black uppercase">Members</Text>
+          <Text className="text-slate-900 text-2xl font-black mt-2">142</Text>
+          <Text className="text-blue-600 text-[11px] font-bold mt-1">Registered</Text>
         </View>
       </View>
 
-      {/* Quick Admin Actions */}
-      <Text className="text-slate-900 text-sm font-black mb-3">Quick Management</Text>
-      <View className="bg-white rounded-3xl p-3 border border-slate-200 space-y-2 gap-2 mb-10 shadow-sm">
-        <TouchableOpacity
-          onPress={async () => {
-            const res = await ApiClient.get('/api/attendance/qr/generate');
-            if (res.success) alert('Dynamic QR generated for reception display!');
-          }}
-          className="flex-row items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200"
-        >
-          <View className="flex-row items-center space-x-3 gap-3">
-            <Text className="text-lg">🎟</Text>
-            <View>
-              <Text className="text-slate-900 text-xs font-black">Generate Reception QR Code</Text>
-              <Text className="text-slate-500 text-[10px] font-semibold">120s rotating front-desk dynamic token</Text>
-            </View>
-          </View>
-          <Text className="text-slate-400 text-xs font-bold">→</Text>
-        </TouchableOpacity>
+      {/* Recent QR Entry Log */}
+      <View className="bg-white rounded-3xl p-5 border border-slate-100 shadow-2xs mb-6">
+        <View className="flex-row items-center justify-between mb-4">
+          <Text className="text-slate-900 font-black text-base">Real-Time QR Turnstile Scans</Text>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => setTodayCheckIns(todayCheckIns + 1)}>
+            <Text className="text-[#FF5A36] text-xs font-black">+ Simulate Scan</Text>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity
-          onPress={async () => {
-            const res = await ApiClient.post('/api/notifications/broadcast', {
-              title: 'Gym Announcement',
-              message: 'Join Coach Alex for the HIIT workshop this Saturday at 10 AM!',
-            });
-            if (res.success) alert('Broadcast sent to all active members!');
-          }}
-          className="flex-row items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200"
-        >
-          <View className="flex-row items-center space-x-3 gap-3">
-            <Text className="text-lg">📢</Text>
-            <View>
-              <Text className="text-slate-900 text-xs font-black">Send Gym Broadcast</Text>
-              <Text className="text-slate-500 text-[10px] font-semibold">Instant notification to all active members</Text>
+        <View className="space-y-3 gap-3">
+          <View className="flex-row items-center justify-between py-1 border-b border-slate-50">
+            <View className="flex-row items-center space-x-3 gap-3">
+              <View className="w-8 h-8 rounded-full bg-slate-900 items-center justify-center">
+                <Text className="text-white text-xs font-black">MV</Text>
+              </View>
+              <View>
+                <Text className="text-slate-900 font-bold text-xs">Martin Vance</Text>
+                <Text className="text-slate-400 text-[11px]">Pro Athlete Plan • 07:15 AM</Text>
+              </View>
             </View>
+            <Text className="text-emerald-500 font-black text-xs">VERIFIED</Text>
           </View>
-          <Text className="text-slate-400 text-xs font-bold">→</Text>
-        </TouchableOpacity>
+
+          <View className="flex-row items-center justify-between py-1 border-b border-slate-50">
+            <View className="flex-row items-center space-x-3 gap-3">
+              <View className="w-8 h-8 rounded-full bg-slate-700 items-center justify-center">
+                <Text className="text-white text-xs font-black">SC</Text>
+              </View>
+              <View>
+                <Text className="text-slate-900 font-bold text-xs">Sarah Connor</Text>
+                <Text className="text-slate-400 text-[11px]">Quarterly Pass • 07:42 AM</Text>
+              </View>
+            </View>
+            <Text className="text-emerald-500 font-black text-xs">VERIFIED</Text>
+          </View>
+
+          <View className="flex-row items-center justify-between py-1">
+            <View className="flex-row items-center space-x-3 gap-3">
+              <View className="w-8 h-8 rounded-full bg-slate-800 items-center justify-center">
+                <Text className="text-white text-xs font-black">AH</Text>
+              </View>
+              <View>
+                <Text className="text-slate-900 font-bold text-xs">Alex Hunter</Text>
+                <Text className="text-slate-400 text-[11px]">VIP Annual • 08:05 AM</Text>
+              </View>
+            </View>
+            <Text className="text-emerald-500 font-black text-xs">VERIFIED</Text>
+          </View>
+        </View>
       </View>
     </ScrollView>
   );
