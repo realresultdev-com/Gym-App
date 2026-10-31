@@ -14,7 +14,7 @@ const EXERCISE_ASSETS: Record<string, GraphicAsset> = {
   'push-up': {
     start: '/exercises/pushup-step1-top.jpg',
     finish: '/exercises/pushup-step2-bottom.jpg',
-    alt: 'Push-Up Form & Mechanics',
+    alt: 'Standard Push-Up Form & Mechanics',
   },
   'seated-dumbbell-shoulder-press': {
     start: '/exercises/shoulder-press-start.jpg',
@@ -22,8 +22,8 @@ const EXERCISE_ASSETS: Record<string, GraphicAsset> = {
     alt: 'Seated Dumbbell Shoulder Press Form',
   },
   'machine-chest-press': {
-    start: '/exercises/shoulder-press-start.jpg',
-    finish: '/exercises/cable-row-finish.jpg',
+    start: '/exercises/chest-press-start.jpg',
+    finish: '/exercises/chest-press-finish.jpg',
     alt: 'Machine Chest Press Form',
   },
   'lat-pulldown': {
@@ -37,13 +37,13 @@ const EXERCISE_ASSETS: Record<string, GraphicAsset> = {
     alt: 'Seated Cable Row Form & Scapular Retraction',
   },
   'dumbbell-biceps-curl': {
-    start: '/exercises/goblet-squat-start.jpg',
-    finish: '/exercises/shoulder-press-start.jpg',
+    start: '/exercises/biceps-curl-start.jpg',
+    finish: '/exercises/biceps-curl-finish.jpg',
     alt: 'Dumbbell Biceps Curl Form',
   },
   'leg-press-machine': {
-    start: '/exercises/goblet-squat-start.jpg',
-    finish: '/exercises/goblet-squat-finish.jpg',
+    start: '/exercises/leg-press-start.jpg',
+    finish: '/exercises/leg-press-finish.jpg',
     alt: 'Leg Press Machine Mechanics',
   },
   'dumbbell-goblet-squat': {
@@ -52,13 +52,13 @@ const EXERCISE_ASSETS: Record<string, GraphicAsset> = {
     alt: 'Dumbbell Goblet Squat Depth & Form',
   },
   'romanian-dumbbell-deadlift': {
-    start: '/exercises/goblet-squat-start.jpg',
-    finish: '/exercises/goblet-squat-finish.jpg',
+    start: '/exercises/romanian-deadlift-start.jpg',
+    finish: '/exercises/romanian-deadlift-finish.jpg',
     alt: 'Romanian Dumbbell Deadlift Hip Hinge',
   },
   'forearm-plank': {
-    start: '/exercises/pushup-step1-top.jpg',
-    finish: '/exercises/pushup-step2-bottom.jpg',
+    start: '/exercises/forearm-plank.jpg',
+    finish: '/exercises/forearm-plank.jpg',
     alt: 'Forearm Plank Rigidity & Core Bracing',
   },
 };
