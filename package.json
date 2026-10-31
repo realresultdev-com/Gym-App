@@ -10,6 +10,7 @@
     "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,green\" \"npm run worker:dev\" \"npm run web:dev\"",
     "web:dev": "npm run dev --workspace=@gym-app/web",
     "web:build": "npm run build --workspace=@gym-app/web",
+    "android:bundle": "npm run playstore:build --workspace=@gym-app/web",
     "worker:dev": "npm run dev --workspace=@gym-app/worker",
     "worker:deploy": "npm run deploy --workspace=@gym-app/worker",
     "mobile:start": "npm run start --workspace=@gym-app/mobile",
